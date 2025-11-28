@@ -6,7 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import config.DatabaseConnection;
+import Config.DatabaseConnection;
 
 public class TestConexion {
     public static void main(String[] args) {
@@ -20,7 +20,7 @@ public class TestConexion {
                 System.out.println("✅ Conexión establecida con éxito.");
                 
                 // 🔹 Crear y ejecutar consulta SQL con PreparedStatement
-                String sql = "SELECT * FROM productos";
+                String sql = "SELECT * FROM producto";
                 try (PreparedStatement pstmt = conn.prepareStatement(sql); 
                         ResultSet rs = pstmt.executeQuery()) {
                     System.out.println("📋 Listado de productos:");

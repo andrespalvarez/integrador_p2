@@ -1,4 +1,4 @@
-package prog2int.Main;
+package Main;
 
 /**
  * Clase utilitaria para mostrar el menú de la aplicación.

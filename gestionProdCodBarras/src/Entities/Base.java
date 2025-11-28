@@ -1,4 +1,4 @@
-package prog2int.Models;
+package Entities;
 
 /**
  * Clase base abstracta para todas las entidades del sistema.

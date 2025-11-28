@@ -1,4 +1,4 @@
-package prog2int.Dao;
+package Dao;
 
 import java.sql.Connection;
 import java.util.List;

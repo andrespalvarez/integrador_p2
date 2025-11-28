@@ -1,4 +1,4 @@
-package prog2int.Main;
+package Main;
 
 /**
  * Punto de entrada alternativo de la aplicación.

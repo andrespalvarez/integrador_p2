@@ -1,9 +1,9 @@
-package prog2int.Service;
+package Service;
 
-import prog2int.Models.Persona;
+import Entities.Producto;
 
 import java.util.List;
-import prog2int.Dao.PersonaDAO;
+import Dao.ProductoDAO;
 
 /**
  * Implementación del servicio de negocio para la entidad Persona.
@@ -18,12 +18,12 @@ import prog2int.Dao.PersonaDAO;
  *
  * Patrón: Service Layer con inyección de dependencias y coordinación de servicios
  */
-public class PersonaServiceImpl implements GenericService<Persona> {
+public class ProductoServiceImpl implements GenericService<Producto> {
     /**
      * DAO para acceso a datos de personas.
      * Inyectado en el constructor (Dependency Injection).
      */
-    private final PersonaDAO personaDAO;
+    private final ProductoDAO personaDAO;
 
     /**
      * Servicio de domicilios para coordinar operaciones transaccionales.
@@ -32,17 +32,17 @@ public class PersonaServiceImpl implements GenericService<Persona> {
      * - El servicio coordina la secuencia: insertar domicilio → insertar persona
      * - Implementa eliminación segura: actualizar FK persona → eliminar domicilio
      */
-    private final DomicilioServiceImpl domicilioServiceImpl;
+    private final CodigoBarrasServiceImpl domicilioServiceImpl;
 
     /**
      * Constructor con inyección de dependencias.
      * Valida que ambas dependencias no sean null (fail-fast).
      *
-     * @param personaDAO DAO de personas (normalmente PersonaDAO)
+     * @param personaDAO DAO de personas (normalmente ProductoDAO)
      * @param domicilioServiceImpl Servicio de domicilios para operaciones coordinadas
      * @throws IllegalArgumentException si alguna dependencia es null
      */
-    public PersonaServiceImpl(PersonaDAO personaDAO, DomicilioServiceImpl domicilioServiceImpl) {
+    public ProductoServiceImpl(ProductoDAO personaDAO, CodigoBarrasServiceImpl domicilioServiceImpl) {
         if (personaDAO == null) {
             throw new IllegalArgumentException("PersonaDAO no puede ser null");
         }
@@ -67,21 +67,21 @@ public class PersonaServiceImpl implements GenericService<Persona> {
      * IMPORTANTE: La coordinación con DomicilioService permite que el domicilio
      * obtenga su ID autogenerado ANTES de insertar la persona (necesario para la FK).
      *
-     * @param persona Persona a insertar (id será ignorado y regenerado)
+     * @param persona Producto a insertar (id será ignorado y regenerado)
      * @throws Exception Si la validación falla, el DNI está duplicado, o hay error de BD
      */
     @Override
-    public void insertar(Persona persona) throws Exception {
+    public void insertar(Producto persona) throws Exception {
         validatePersona(persona);
         validateDniUnique(persona.getDni(), null);
 
         // Coordinación con DomicilioService (transaccional)
         if (persona.getDomicilio() != null) {
             if (persona.getDomicilio().getId() == 0) {
-                // Domicilio nuevo: insertar primero para obtener ID autogenerado
+                // CodigoBarras nuevo: insertar primero para obtener ID autogenerado
                 domicilioServiceImpl.insertar(persona.getDomicilio());
             } else {
-                // Domicilio existente: actualizar datos
+                // CodigoBarras existente: actualizar datos
                 domicilioServiceImpl.actualizar(persona.getDomicilio());
             }
         }
@@ -102,11 +102,11 @@ public class PersonaServiceImpl implements GenericService<Persona> {
      * - Asignar nuevo domicilio: opción 6 (crea nuevo) o 7 (usa existente)
      * - Actualizar domicilio: opción 9 (modifica domicilio actual)
      *
-     * @param persona Persona con los datos actualizados
+     * @param persona Producto con los datos actualizados
      * @throws Exception Si la validación falla, el DNI está duplicado, o la persona no existe
      */
     @Override
-    public void actualizar(Persona persona) throws Exception {
+    public void actualizar(Producto persona) throws Exception {
         validatePersona(persona);
         if (persona.getId() <= 0) {
             throw new IllegalArgumentException("El ID de la persona debe ser mayor a 0 para actualizar");
@@ -139,11 +139,11 @@ public class PersonaServiceImpl implements GenericService<Persona> {
      * Incluye el domicilio asociado mediante LEFT JOIN (PersonaDAO).
      *
      * @param id ID de la persona a buscar
-     * @return Persona encontrada (con su domicilio si tiene), o null si no existe o está eliminada
+     * @return Producto encontrada (con su domicilio si tiene), o null si no existe o está eliminada
      * @throws Exception Si id <= 0 o hay error de BD
      */
     @Override
-    public Persona getById(int id) throws Exception {
+    public Producto getById(int id) throws Exception {
         if (id <= 0) {
             throw new IllegalArgumentException("El ID debe ser mayor a 0");
         }
@@ -158,7 +158,7 @@ public class PersonaServiceImpl implements GenericService<Persona> {
      * @throws Exception Si hay error de BD
      */
     @Override
-    public List<Persona> getAll() throws Exception {
+    public List<Producto> getAll() throws Exception {
         return personaDAO.getAll();
     }
 
@@ -166,9 +166,9 @@ public class PersonaServiceImpl implements GenericService<Persona> {
      * Expone el servicio de domicilios para que MenuHandler pueda usarlo.
      * Necesario para operaciones de menú que trabajan directamente con domicilios.
      *
-     * @return Instancia de DomicilioServiceImpl inyectada en este servicio
+     * @return Instancia de CodigoBarrasServiceImpl inyectada en este servicio
      */
-    public DomicilioServiceImpl getDomicilioService() {
+    public CodigoBarrasServiceImpl getDomicilioService() {
         return this.domicilioServiceImpl;
     }
 
@@ -186,7 +186,7 @@ public class PersonaServiceImpl implements GenericService<Persona> {
      * @throws IllegalArgumentException Si el filtro está vacío
      * @throws Exception Si hay error de BD
      */
-    public List<Persona> buscarPorNombreApellido(String filtro) throws Exception {
+    public List<Producto> buscarPorNombreApellido(String filtro) throws Exception {
         if (filtro == null || filtro.trim().isEmpty()) {
             throw new IllegalArgumentException("El filtro de búsqueda no puede estar vacío");
         }
@@ -202,11 +202,11 @@ public class PersonaServiceImpl implements GenericService<Persona> {
      * - Buscar persona específica desde el menú (opción 4)
      *
      * @param dni DNI exacto a buscar (no puede estar vacío)
-     * @return Persona con ese DNI, o null si no existe o está eliminada
+     * @return Producto con ese DNI, o null si no existe o está eliminada
      * @throws IllegalArgumentException Si el DNI está vacío
      * @throws Exception Si hay error de BD
      */
-    public Persona buscarPorDni(String dni) throws Exception {
+    public Producto buscarPorDni(String dni) throws Exception {
         if (dni == null || dni.trim().isEmpty()) {
             throw new IllegalArgumentException("El DNI no puede estar vacío");
         }
@@ -240,7 +240,7 @@ public class PersonaServiceImpl implements GenericService<Persona> {
             throw new IllegalArgumentException("Los IDs deben ser mayores a 0");
         }
 
-        Persona persona = personaDAO.getById(personaId);
+        Producto persona = personaDAO.getById(personaId);
         if (persona == null) {
             throw new IllegalArgumentException("Persona no encontrada con ID: " + personaId);
         }
@@ -262,10 +262,10 @@ public class PersonaServiceImpl implements GenericService<Persona> {
      * - RN-035: Nombre, apellido y DNI son obligatorios
      * - RN-036: Se verifica trim() para evitar strings solo con espacios
      *
-     * @param persona Persona a validar
+     * @param persona Producto a validar
      * @throws IllegalArgumentException Si alguna validación falla
      */
-    private void validatePersona(Persona persona) {
+    private void validatePersona(Producto persona) {
         if (persona == null) {
             throw new IllegalArgumentException("La persona no puede ser null");
         }
@@ -303,7 +303,7 @@ public class PersonaServiceImpl implements GenericService<Persona> {
      * @throws Exception Si hay error de BD al buscar
      */
     private void validateDniUnique(String dni, Integer personaId) throws Exception {
-        Persona existente = personaDAO.buscarPorDni(dni);
+        Producto existente = personaDAO.buscarPorDni(dni);
         if (existente != null) {
             // Existe una persona con ese DNI
             if (personaId == null || existente.getId() != personaId) {

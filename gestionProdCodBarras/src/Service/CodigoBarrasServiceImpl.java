@@ -1,8 +1,8 @@
-package prog2int.Service;
+package Service;
 
 import java.util.List;
-import prog2int.Dao.GenericDAO;
-import prog2int.Models.Domicilio;
+import Dao.GenericDAO;
+import Entities.CodigoBarras;
 
 /**
  * Implementación del servicio de negocio para la entidad Domicilio.
@@ -16,13 +16,13 @@ import prog2int.Models.Domicilio;
  *
  * Patrón: Service Layer con inyección de dependencias
  */
-public class DomicilioServiceImpl implements GenericService<Domicilio> {
+public class CodigoBarrasServiceImpl implements GenericService<CodigoBarras> {
     /**
      * DAO para acceso a datos de domicilios.
      * Inyectado en el constructor (Dependency Injection).
      * Usa GenericDAO para permitir testing con mocks.
      */
-    private final GenericDAO<Domicilio> domicilioDAO;
+    private final GenericDAO<CodigoBarras> domicilioDAO;
 
     /**
      * Constructor con inyección de dependencias.
@@ -31,7 +31,7 @@ public class DomicilioServiceImpl implements GenericService<Domicilio> {
      * @param domicilioDAO DAO de domicilios (normalmente DomicilioDAO)
      * @throws IllegalArgumentException si domicilioDAO es null
      */
-    public DomicilioServiceImpl(GenericDAO<Domicilio> domicilioDAO) {
+    public CodigoBarrasServiceImpl(GenericDAO<CodigoBarras> domicilioDAO) {
         if (domicilioDAO == null) {
             throw new IllegalArgumentException("DomicilioDAO no puede ser null");
         }
@@ -46,11 +46,11 @@ public class DomicilioServiceImpl implements GenericService<Domicilio> {
      * 2. Delega al DAO para insertar
      * 3. El DAO asigna el ID autogenerado al objeto domicilio
      *
-     * @param domicilio Domicilio a insertar (id será ignorado y regenerado)
+     * @param domicilio CodigoBarras a insertar (id será ignorado y regenerado)
      * @throws Exception Si la validación falla o hay error de BD
      */
     @Override
-    public void insertar(Domicilio domicilio) throws Exception {
+    public void insertar(CodigoBarras domicilio) throws Exception {
         validateDomicilio(domicilio);
         domicilioDAO.insertar(domicilio);
     }
@@ -65,11 +65,11 @@ public class DomicilioServiceImpl implements GenericService<Domicilio> {
      * IMPORTANTE: Si varias personas comparten este domicilio,
      * la actualización los afectará a TODAS (RN-040).
      *
-     * @param domicilio Domicilio con los datos actualizados
+     * @param domicilio CodigoBarras con los datos actualizados
      * @throws Exception Si la validación falla o el domicilio no existe
      */
     @Override
-    public void actualizar(Domicilio domicilio) throws Exception {
+    public void actualizar(CodigoBarras domicilio) throws Exception {
         validateDomicilio(domicilio);
         if (domicilio.getId() <= 0) {
             throw new IllegalArgumentException("El ID del domicilio debe ser mayor a 0 para actualizar");
@@ -102,11 +102,11 @@ public class DomicilioServiceImpl implements GenericService<Domicilio> {
      * Obtiene un domicilio por su ID.
      *
      * @param id ID del domicilio a buscar
-     * @return Domicilio encontrado, o null si no existe o está eliminado
+     * @return CodigoBarras encontrado, o null si no existe o está eliminado
      * @throws Exception Si id <= 0 o hay error de BD
      */
     @Override
-    public Domicilio getById(int id) throws Exception {
+    public CodigoBarras getById(int id) throws Exception {
         if (id <= 0) {
             throw new IllegalArgumentException("El ID debe ser mayor a 0");
         }
@@ -120,7 +120,7 @@ public class DomicilioServiceImpl implements GenericService<Domicilio> {
      * @throws Exception Si hay error de BD
      */
     @Override
-    public List<Domicilio> getAll() throws Exception {
+    public List<CodigoBarras> getAll() throws Exception {
         return domicilioDAO.getAll();
     }
 
@@ -131,10 +131,10 @@ public class DomicilioServiceImpl implements GenericService<Domicilio> {
      * - RN-023: Calle y número son obligatorios
      * - RN-024: Se verifica trim() para evitar strings solo con espacios
      *
-     * @param domicilio Domicilio a validar
+     * @param domicilio CodigoBarras a validar
      * @throws IllegalArgumentException Si alguna validación falla
      */
-    private void validateDomicilio(Domicilio domicilio) {
+    private void validateDomicilio(CodigoBarras domicilio) {
         if (domicilio == null) {
             throw new IllegalArgumentException("El domicilio no puede ser null");
         }

@@ -1,12 +1,12 @@
-package prog2int.Dao;
+package Dao;
 
-import prog2int.Models.Persona;
+import Entities.Producto;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import prog2int.Config.DatabaseConnection;
-import prog2int.Models.Domicilio;
+import Config.DatabaseConnection;
+import Entities.CodigoBarras;
 
 /**
  * Data Access Object para la entidad Persona.
@@ -22,7 +22,7 @@ import prog2int.Models.Domicilio;
  *
  * Patrón: DAO con try-with-resources para manejo automático de recursos JDBC
  */
-public class PersonaDAO implements GenericDAO<Persona> {
+public class ProductoDAO implements GenericDAO<Producto> {
     /**
      * Query de inserción de persona.
      * Inserta nombre, apellido, dni y FK domicilio_id.
@@ -94,7 +94,7 @@ public class PersonaDAO implements GenericDAO<Persona> {
      * DAO de domicilios (actualmente no usado, pero disponible para operaciones futuras).
      * Inyectado en el constructor por si se necesita coordinar operaciones.
      */
-    private final DomicilioDAO domicilioDAO;
+    private final CodigoBarrasDAO domicilioDAO;
 
     /**
      * Constructor con inyección de DomicilioDAO.
@@ -103,7 +103,7 @@ public class PersonaDAO implements GenericDAO<Persona> {
      * @param domicilioDAO DAO de domicilios
      * @throws IllegalArgumentException si domicilioDAO es null
      */
-    public PersonaDAO(DomicilioDAO domicilioDAO) {
+    public ProductoDAO(CodigoBarrasDAO domicilioDAO) {
         if (domicilioDAO == null) {
             throw new IllegalArgumentException("DomicilioDAO no puede ser null");
         }
@@ -122,11 +122,11 @@ public class PersonaDAO implements GenericDAO<Persona> {
      * 5. Obtiene el ID autogenerado y lo asigna a persona.id
      * 6. Cierra recursos automáticamente (try-with-resources)
      *
-     * @param persona Persona a insertar (id será ignorado y regenerado)
+     * @param persona Producto a insertar (id será ignorado y regenerado)
      * @throws Exception Si falla la inserción o no se obtiene ID generado
      */
     @Override
-    public void insertar(Persona persona) throws Exception {
+    public void insertar(Producto persona) throws Exception {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -145,12 +145,12 @@ public class PersonaDAO implements GenericDAO<Persona> {
      * - Operaciones que requieren múltiples inserts coordinados
      * - Rollback automático si alguna operación falla
      *
-     * @param persona Persona a insertar
+     * @param persona Producto a insertar
      * @param conn Conexión transaccional (NO se cierra en este método)
      * @throws Exception Si falla la inserción
      */
     @Override
-    public void insertTx(Persona persona, Connection conn) throws Exception {
+    public void insertTx(Producto persona, Connection conn) throws Exception {
         try (PreparedStatement stmt = conn.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS)) {
             setPersonaParameters(stmt, persona);
             stmt.executeUpdate();
@@ -169,11 +169,11 @@ public class PersonaDAO implements GenericDAO<Persona> {
      * - Si persona.domicilio == null → domicilio_id = NULL (desasociar)
      * - Si persona.domicilio.id > 0 → domicilio_id = domicilio.id (asociar/cambiar)
      *
-     * @param persona Persona con los datos actualizados (id debe ser > 0)
+     * @param persona Producto con los datos actualizados (id debe ser > 0)
      * @throws SQLException Si la persona no existe o hay error de BD
      */
     @Override
-    public void actualizar(Persona persona) throws Exception {
+    public void actualizar(Producto persona) throws Exception {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(UPDATE_SQL)) {
 
@@ -222,11 +222,11 @@ public class PersonaDAO implements GenericDAO<Persona> {
      * Incluye su domicilio asociado mediante LEFT JOIN.
      *
      * @param id ID de la persona a buscar
-     * @return Persona encontrada con su domicilio, o null si no existe o está eliminada
+     * @return Producto encontrada con su domicilio, o null si no existe o está eliminada
      * @throws Exception Si hay error de BD (captura SQLException y re-lanza con mensaje descriptivo)
      */
     @Override
-    public Persona getById(int id) throws Exception {
+    public Producto getById(int id) throws Exception {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(SELECT_BY_ID_SQL)) {
 
@@ -253,8 +253,8 @@ public class PersonaDAO implements GenericDAO<Persona> {
      * @throws Exception Si hay error de BD
      */
     @Override
-    public List<Persona> getAll() throws Exception {
-        List<Persona> personas = new ArrayList<>();
+    public List<Producto> getAll() throws Exception {
+        List<Producto> personas = new ArrayList<>();
 
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
@@ -284,12 +284,12 @@ public class PersonaDAO implements GenericDAO<Persona> {
      * @throws IllegalArgumentException Si el filtro está vacío
      * @throws SQLException Si hay error de BD
      */
-    public List<Persona> buscarPorNombreApellido(String filtro) throws SQLException {
+    public List<Producto> buscarPorNombreApellido(String filtro) throws SQLException {
         if (filtro == null || filtro.trim().isEmpty()) {
             throw new IllegalArgumentException("El filtro de búsqueda no puede estar vacío");
         }
 
-        List<Persona> personas = new ArrayList<>();
+        List<Producto> personas = new ArrayList<>();
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(SEARCH_BY_NAME_SQL)) {
@@ -317,11 +317,11 @@ public class PersonaDAO implements GenericDAO<Persona> {
      * - MenuHandler opción 4 para buscar persona específica por DNI
      *
      * @param dni DNI exacto a buscar (se aplica trim automáticamente)
-     * @return Persona con ese DNI, o null si no existe o está eliminada
+     * @return Producto con ese DNI, o null si no existe o está eliminada
      * @throws IllegalArgumentException Si el DNI está vacío
      * @throws SQLException Si hay error de BD
      */
-    public Persona buscarPorDni(String dni) throws SQLException {
+    public Producto buscarPorDni(String dni) throws SQLException {
         if (dni == null || dni.trim().isEmpty()) {
             throw new IllegalArgumentException("El DNI no puede estar vacío");
         }
@@ -351,10 +351,10 @@ public class PersonaDAO implements GenericDAO<Persona> {
      * 4. domicilio_id (Integer o NULL)
      *
      * @param stmt PreparedStatement con INSERT_SQL
-     * @param persona Persona con los datos a insertar
+     * @param persona Producto con los datos a insertar
      * @throws SQLException Si hay error al setear parámetros
      */
-    private void setPersonaParameters(PreparedStatement stmt, Persona persona) throws SQLException {
+    private void setPersonaParameters(PreparedStatement stmt, Producto persona) throws SQLException {
         stmt.setString(1, persona.getNombre());
         stmt.setString(2, persona.getApellido());
         stmt.setString(3, persona.getDni());
@@ -373,10 +373,10 @@ public class PersonaDAO implements GenericDAO<Persona> {
      *
      * @param stmt PreparedStatement
      * @param parameterIndex Índice del parámetro (1-based)
-     * @param domicilio Domicilio asociado (puede ser null)
+     * @param domicilio CodigoBarras asociado (puede ser null)
      * @throws SQLException Si hay error al setear el parámetro
      */
-    private void setDomicilioId(PreparedStatement stmt, int parameterIndex, Domicilio domicilio) throws SQLException {
+    private void setDomicilioId(PreparedStatement stmt, int parameterIndex, CodigoBarras domicilio) throws SQLException {
         if (domicilio != null && domicilio.getId() > 0) {
             stmt.setInt(parameterIndex, domicilio.getId());
         } else {
@@ -397,7 +397,7 @@ public class PersonaDAO implements GenericDAO<Persona> {
      * @param persona Objeto persona a actualizar con el ID generado
      * @throws SQLException Si no se pudo obtener el ID generado (indica problema grave)
      */
-    private void setGeneratedId(PreparedStatement stmt, Persona persona) throws SQLException {
+    private void setGeneratedId(PreparedStatement stmt, Producto persona) throws SQLException {
         try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
             if (generatedKeys.next()) {
                 persona.setId(generatedKeys.getInt(1));
@@ -428,11 +428,11 @@ public class PersonaDAO implements GenericDAO<Persona> {
      * - Si domicilio_id > 0 → Se crea objeto Domicilio y se asigna a persona
      *
      * @param rs ResultSet posicionado en una fila con datos de persona y domicilio
-     * @return Persona reconstruida con su domicilio (si tiene)
+     * @return Producto reconstruida con su domicilio (si tiene)
      * @throws SQLException Si hay error al leer columnas del ResultSet
      */
-    private Persona mapResultSetToPersona(ResultSet rs) throws SQLException {
-        Persona persona = new Persona();
+    private Producto mapResultSetToPersona(ResultSet rs) throws SQLException {
+        Producto persona = new Producto();
         persona.setId(rs.getInt("id"));
         persona.setNombre(rs.getString("nombre"));
         persona.setApellido(rs.getString("apellido"));
@@ -441,7 +441,7 @@ public class PersonaDAO implements GenericDAO<Persona> {
         // Manejo correcto de LEFT JOIN: verificar si domicilio_id es NULL
         int domicilioId = rs.getInt("domicilio_id");
         if (domicilioId > 0 && !rs.wasNull()) {
-            Domicilio domicilio = new Domicilio();
+            CodigoBarras domicilio = new CodigoBarras();
             domicilio.setId(rs.getInt("dom_id"));
             domicilio.setCalle(rs.getString("calle"));
             domicilio.setNumero(rs.getString("numero"));

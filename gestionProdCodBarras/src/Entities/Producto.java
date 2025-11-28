@@ -1,4 +1,4 @@
-package prog2int.Models;
+package Entities;
 
 import java.util.Objects;
 
@@ -19,7 +19,7 @@ import java.util.Objects;
  * - domicilio_id: INT NULL (FK a domicilios)
  * - eliminado: BOOLEAN DEFAULT FALSE (heredado de Base)
  */
-public class Persona extends Base {
+public class Producto extends Base {
     /** Nombre de la persona. Requerido, no puede ser null ni vacío. */
     private String nombre;
 
@@ -37,14 +37,14 @@ public class Persona extends Base {
      * Puede ser null (persona sin domicilio).
      * Se carga mediante LEFT JOIN en PersonaDAO.
      */
-    private Domicilio domicilio;
+    private CodigoBarras domicilio;
 
     /**
      * Constructor completo para reconstruir una Persona desde la BD.
      * Usado por PersonaDAO al mapear ResultSet.
      * El domicilio se asigna posteriormente con setDomicilio().
      */
-    public Persona(int id, String nombre, String apellido, String dni) {
+    public Producto(int id, String nombre, String apellido, String dni) {
         super(id, false);
         this.nombre = nombre;
         this.apellido = apellido;
@@ -52,7 +52,7 @@ public class Persona extends Base {
     }
 
     /** Constructor por defecto para crear una persona nueva sin ID. */
-    public Persona() {
+    public Producto() {
         super();
     }
 
@@ -92,7 +92,7 @@ public class Persona extends Base {
         this.dni = dni;
     }
 
-    public Domicilio getDomicilio() {
+    public CodigoBarras getDomicilio() {
         return domicilio;
     }
 
@@ -100,7 +100,7 @@ public class Persona extends Base {
      * Asocia o desasocia un domicilio a la persona.
      * Si domicilio es null, la FK domicilio_id será NULL en la BD.
      */
-    public void setDomicilio(Domicilio domicilio) {
+    public void setDomicilio(CodigoBarras domicilio) {
         this.domicilio = domicilio;
     }
 
@@ -125,7 +125,7 @@ public class Persona extends Base {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Persona persona = (Persona) o;
+        Producto persona = (Producto) o;
         return Objects.equals(dni, persona.dni);
     }
 

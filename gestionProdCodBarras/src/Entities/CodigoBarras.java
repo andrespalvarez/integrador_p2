@@ -1,4 +1,4 @@
-package prog2int.Models;
+package Entities;
 
 import java.util.Objects;
 
@@ -17,7 +17,7 @@ import java.util.Objects;
  * - numero: VARCHAR(10) NOT NULL
  * - eliminado: BOOLEAN DEFAULT FALSE (heredado de Base)
  */
-public class Domicilio extends Base {
+public class CodigoBarras extends Base {
     /**
      * Nombre de la calle.
      * Requerido, no puede ser null ni estar vacío.
@@ -39,7 +39,7 @@ public class Domicilio extends Base {
      * @param calle Nombre de la calle
      * @param numero Número de la dirección
      */
-    public Domicilio(int id, String calle, String numero) {
+    public CodigoBarras(int id, String calle, String numero) {
         super(id, false); // Llama al constructor de Base con eliminado=false
         this.calle = calle;
         this.numero = numero;
@@ -50,7 +50,7 @@ public class Domicilio extends Base {
      * El ID será asignado por la BD al insertar.
      * El flag eliminado se inicializa en false por Base.
      */
-    public Domicilio() {
+    public CodigoBarras() {
         super();
     }
 
@@ -118,7 +118,7 @@ public class Domicilio extends Base {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Domicilio domicilio = (Domicilio) o;
+        CodigoBarras domicilio = (CodigoBarras) o;
         return Objects.equals(calle, domicilio.calle) &&
                Objects.equals(numero, domicilio.numero);
     }

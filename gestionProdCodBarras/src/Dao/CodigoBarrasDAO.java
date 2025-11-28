@@ -1,10 +1,10 @@
-package prog2int.Dao;
+package Dao;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import prog2int.Config.DatabaseConnection;
-import prog2int.Models.Domicilio;
+import Config.DatabaseConnection;
+import Entities.CodigoBarras;
 
 /**
  * Data Access Object para la entidad Domicilio.
@@ -12,19 +12,19 @@ import prog2int.Models.Domicilio;
  *
  * Características:
  * - Implementa GenericDAO<Domicilio> para operaciones CRUD estándar
- * - Usa PreparedStatements en TODAS las consultas (protección contra SQL injection)
- * - Implementa soft delete (eliminado=TRUE, no DELETE físico)
- * - NO maneja relaciones (Domicilio es entidad independiente)
- * - Soporta transacciones mediante insertTx() (recibe Connection externa)
- *
- * Diferencias con PersonaDAO:
- * - Más simple: NO tiene LEFT JOINs (Domicilio no tiene relaciones cargadas)
- * - NO tiene búsquedas especializadas (solo CRUD básico)
- * - Todas las queries filtran por eliminado=FALSE (soft delete)
- *
- * Patrón: DAO con try-with-resources para manejo automático de recursos JDBC
+ - Usa PreparedStatements en TODAS las consultas (protección contra SQL injection)
+ - Implementa soft delete (eliminado=TRUE, no DELETE físico)
+ - NO maneja relaciones (CodigoBarras es entidad independiente)
+ - Soporta transacciones mediante insertTx() (recibe Connection externa)
+
+ Diferencias con PersonaDAO:
+ - Más simple: NO tiene LEFT JOINs (CodigoBarras no tiene relaciones cargadas)
+ - NO tiene búsquedas especializadas (solo CRUD básico)
+ - Todas las queries filtran por eliminado=FALSE (soft delete)
+
+ Patrón: DAO con try-with-resources para manejo automático de recursos JDBC
  */
-public class DomicilioDAO implements GenericDAO<Domicilio> {
+public class CodigoBarrasDAO implements GenericDAO<CodigoBarras> {
     /**
      * Query de inserción de domicilio.
      * Inserta calle y número.
@@ -84,11 +84,11 @@ public class DomicilioDAO implements GenericDAO<Domicilio> {
      * Esto permite que PersonaServiceImpl.insertar() use domicilio.getId()
      * inmediatamente después de insertar.
      *
-     * @param domicilio Domicilio a insertar (id será ignorado y regenerado)
+     * @param domicilio CodigoBarras a insertar (id será ignorado y regenerado)
      * @throws SQLException Si falla la inserción o no se obtiene ID generado
      */
     @Override
-    public void insertar(Domicilio domicilio) throws SQLException {
+    public void insertar(CodigoBarras domicilio) throws SQLException {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -108,12 +108,12 @@ public class DomicilioDAO implements GenericDAO<Domicilio> {
      * - Operaciones que requieren múltiples inserts coordinados
      * - Rollback automático si alguna operación falla
      *
-     * @param domicilio Domicilio a insertar
+     * @param domicilio CodigoBarras a insertar
      * @param conn Conexión transaccional (NO se cierra en este método)
      * @throws Exception Si falla la inserción
      */
     @Override
-    public void insertTx(Domicilio domicilio, Connection conn) throws Exception {
+    public void insertTx(CodigoBarras domicilio, Connection conn) throws Exception {
         try (PreparedStatement stmt = conn.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS)) {
             setDomicilioParameters(stmt, domicilio);
             stmt.executeUpdate();
@@ -137,11 +137,11 @@ public class DomicilioDAO implements GenericDAO<Domicilio> {
      * Esto es CORRECTO: permite que familias compartan la misma dirección
      * y se actualice en un solo lugar.
      *
-     * @param domicilio Domicilio con los datos actualizados (id debe ser > 0)
+     * @param domicilio CodigoBarras con los datos actualizados (id debe ser > 0)
      * @throws SQLException Si el domicilio no existe o hay error de BD
      */
     @Override
-    public void actualizar(Domicilio domicilio) throws SQLException {
+    public void actualizar(CodigoBarras domicilio) throws SQLException {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(UPDATE_SQL)) {
 
@@ -202,11 +202,11 @@ public class DomicilioDAO implements GenericDAO<Domicilio> {
      * Solo retorna domicilios activos (eliminado=FALSE).
      *
      * @param id ID del domicilio a buscar
-     * @return Domicilio encontrado, o null si no existe o está eliminado
+     * @return CodigoBarras encontrado, o null si no existe o está eliminado
      * @throws SQLException Si hay error de BD
      */
     @Override
-    public Domicilio getById(int id) throws SQLException {
+    public CodigoBarras getById(int id) throws SQLException {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(SELECT_BY_ID_SQL)) {
 
@@ -233,8 +233,8 @@ public class DomicilioDAO implements GenericDAO<Domicilio> {
      * @throws SQLException Si hay error de BD
      */
     @Override
-    public List<Domicilio> getAll() throws SQLException {
-        List<Domicilio> domicilios = new ArrayList<>();
+    public List<CodigoBarras> getAll() throws SQLException {
+        List<CodigoBarras> domicilios = new ArrayList<>();
 
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
@@ -257,10 +257,10 @@ public class DomicilioDAO implements GenericDAO<Domicilio> {
      * 2. numero (String)
      *
      * @param stmt PreparedStatement con INSERT_SQL
-     * @param domicilio Domicilio con los datos a insertar
+     * @param domicilio CodigoBarras con los datos a insertar
      * @throws SQLException Si hay error al setear parámetros
      */
-    private void setDomicilioParameters(PreparedStatement stmt, Domicilio domicilio) throws SQLException {
+    private void setDomicilioParameters(PreparedStatement stmt, CodigoBarras domicilio) throws SQLException {
         stmt.setString(1, domicilio.getCalle());
         stmt.setString(2, domicilio.getNumero());
     }
@@ -280,7 +280,7 @@ public class DomicilioDAO implements GenericDAO<Domicilio> {
      * @param domicilio Objeto domicilio a actualizar con el ID generado
      * @throws SQLException Si no se pudo obtener el ID generado (indica problema grave)
      */
-    private void setGeneratedId(PreparedStatement stmt, Domicilio domicilio) throws SQLException {
+    private void setGeneratedId(PreparedStatement stmt, CodigoBarras domicilio) throws SQLException {
         try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
             if (generatedKeys.next()) {
                 domicilio.setId(generatedKeys.getInt(1));
@@ -303,11 +303,11 @@ public class DomicilioDAO implements GenericDAO<Domicilio> {
      * garantizando que solo se retornan domicilios activos.
      *
      * @param rs ResultSet posicionado en una fila con datos de domicilio
-     * @return Domicilio reconstruido
+     * @return CodigoBarras reconstruido
      * @throws SQLException Si hay error al leer columnas del ResultSet
      */
-    private Domicilio mapResultSetToDomicilio(ResultSet rs) throws SQLException {
-        return new Domicilio(
+    private CodigoBarras mapResultSetToDomicilio(ResultSet rs) throws SQLException {
+        return new CodigoBarras(
             rs.getInt("id"),
             rs.getString("calle"),
             rs.getString("numero")

@@ -1,4 +1,4 @@
-package config;
+package Config;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -7,10 +7,9 @@ import java.sql.SQLException;
 public class DatabaseConnection {
 
     // Datos de conexión - Se configuran directamente en el código
-//    private static final String URL = "jdbc:mysql://localhost:3306/db"; //direccion mysql server
-    private static final String URL = "jdbc:mariadb://localhost:3306/db"; //direccion mariadb
+    private static final String URL = "jdbc:mariadb://localhost:3306/dbProdCodBarras"; //direccion mariadb
     private static final String USER = "root";
-    private static final String PASSWORD = "123456789";
+    private static final String PASSWORD = "";
 
     static {
         try {
@@ -31,7 +30,7 @@ public class DatabaseConnection {
      */
     public static Connection getConnection() throws SQLException {
         // Validación adicional para asegurarse de que las credenciales no estén vacías
-        if (URL == null || URL.isEmpty() || USER == null || USER.isEmpty() || PASSWORD == null || PASSWORD.isEmpty()) {
+        if (URL == null || URL.isEmpty() || USER == null || USER.isEmpty() || PASSWORD == null ) {
             throw new SQLException("Configuración de la base de datos incompleta o inválida.");
         }
         return DriverManager.getConnection(URL, USER, PASSWORD);

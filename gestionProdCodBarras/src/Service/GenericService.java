@@ -1,4 +1,4 @@
-package prog2int.Service;
+package Service;
 
 import java.util.List;
 

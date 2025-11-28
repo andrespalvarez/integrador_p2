@@ -1,10 +1,10 @@
-package prog2int.Main;
+package Main;
 
 import java.util.Scanner;
-import prog2int.Dao.DomicilioDAO;
-import prog2int.Dao.PersonaDAO;
-import prog2int.Service.DomicilioServiceImpl;
-import prog2int.Service.PersonaServiceImpl;
+import Dao.CodigoBarrasDAO;
+import Dao.ProductoDAO;
+import Service.CodigoBarrasServiceImpl;
+import Service.ProductoServiceImpl;
 
 /**
  * Orquestador principal del menú de la aplicación.
@@ -63,7 +63,7 @@ public class AppMenu {
      */
     public AppMenu() {
         this.scanner = new Scanner(System.in);
-        PersonaServiceImpl personaService = createPersonaService();
+        ProductoServiceImpl personaService = createPersonaService();
         this.menuHandler = new MenuHandler(scanner, personaService);
         this.running = true;
     }
@@ -189,12 +189,12 @@ public class AppMenu {
      *
      * Patrón: Factory Method para construcción de dependencias
      *
-     * @return PersonaServiceImpl completamente inicializado con todas sus dependencias
+     * @return ProductoServiceImpl completamente inicializado con todas sus dependencias
      */
-    private PersonaServiceImpl createPersonaService() {
-        DomicilioDAO domicilioDAO = new DomicilioDAO();
-        PersonaDAO personaDAO = new PersonaDAO(domicilioDAO);
-        DomicilioServiceImpl domicilioService = new DomicilioServiceImpl(domicilioDAO);
-        return new PersonaServiceImpl(personaDAO, domicilioService);
+    private ProductoServiceImpl createPersonaService() {
+        CodigoBarrasDAO domicilioDAO = new CodigoBarrasDAO();
+        ProductoDAO personaDAO = new ProductoDAO(domicilioDAO);
+        CodigoBarrasServiceImpl domicilioService = new CodigoBarrasServiceImpl(domicilioDAO);
+        return new ProductoServiceImpl(personaDAO, domicilioService);
     }
 }
