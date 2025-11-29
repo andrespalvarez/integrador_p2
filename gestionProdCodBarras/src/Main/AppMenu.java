@@ -44,7 +44,7 @@ public class AppMenu {
     private boolean running;
 
     /**
-     * Constructor que inicializa la aplicación.
+     * Constructor que inicializa la aplicación. 
      *
      * Flujo de inicialización:
      * 1. Crea Scanner único para toda la aplicación
@@ -53,18 +53,18 @@ public class AppMenu {
      * 4. Setea running=true para iniciar el loop
      *
      * Patrón de inyección de dependencias (DI) manual:
-     * - DomicilioDAO (sin dependencias)
-     * - PersonaDAO (depende de DomicilioDAO)
-     * - DomicilioServiceImpl (depende de DomicilioDAO)
-     * - PersonaServiceImpl (depende de PersonaDAO y DomicilioServiceImpl)
-     * - MenuHandler (depende de Scanner y PersonaServiceImpl)
+     * - DomicilioDAO (sin dependencias)    //****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****                                                  
+     * - PersonaDAO (depende de DomicilioDAO)       //****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR**** 
+     * - DomicilioServiceImpl (depende de DomicilioDAO)     //****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****  
+     * - PersonaServiceImpl (depende de PersonaDAO y DomicilioServiceImpl)  //****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR**** 
+     * - MenuHandler (depende de Scanner y PersonaServiceImpl)        //****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
      *
      * Esta inicialización garantiza que todas las dependencias estén correctamente conectadas.
      */
     public AppMenu() {
         this.scanner = new Scanner(System.in);
-        ProductoServiceImpl personaService = createPersonaService();
-        this.menuHandler = new MenuHandler(scanner, personaService);
+        ProductoServiceImpl personaService = createPersonaService();    //****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+        this.menuHandler = new MenuHandler(scanner, personaService);    //****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
         this.running = true;
     }
 
@@ -121,17 +121,17 @@ public class AppMenu {
      * - Permite bloques con {} para múltiples statements
      *
      * Mapeo de opciones (corresponde a MenuDisplay):
-     * 1  → Crear persona (con domicilio opcional)
-     * 2  → Listar personas (todas o filtradas)
-     * 3  → Actualizar persona
-     * 4  → Eliminar persona (soft delete)
-     * 5  → Crear domicilio independiente
-     * 6  → Listar domicilios
-     * 7  → Actualizar domicilio por ID (afecta a todas las personas que lo comparten)
-     * 8  → Eliminar domicilio por ID (PELIGROSO - puede dejar FKs huérfanas)
-     * 9  → Actualizar domicilio de una persona (afecta a todas las personas que lo comparten)
-     * 10 → Eliminar domicilio de una persona (SEGURO - actualiza FK primero)
-     * 0  → Salir (setea running=false para terminar el loop)
+     * 1  → Crear persona (con domicilio opcional)  //****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+     * 2  → Listar personas (todas o filtradas) //****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+     * 3  → Actualizar persona      //****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+     * 4  → Eliminar persona (soft delete)  //****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+     * 5  → Crear domicilio independiente   //****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+     * 6  → Listar domicilios   //****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+     * 7  → Actualizar domicilio por ID (afecta a todas las personas que lo comparten)  //****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+     * 8  → Eliminar domicilio por ID (PELIGROSO - puede dejar FKs huérfanas)   //****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+     * 9  → Actualizar domicilio de una persona (afecta a todas las personas que lo comparten)  //****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+     * 10 → Eliminar domicilio de una persona (SEGURO - actualiza FK primero)   //****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+     * 0  → Salir (setea running=false para terminar el loop)   //****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
      *
      * Opción inválida: Muestra mensaje y continúa el loop.
      *
@@ -142,16 +142,16 @@ public class AppMenu {
      */
     private void processOption(int opcion) {
         switch (opcion) {
-            case 1 -> menuHandler.crearPersona();
-            case 2 -> menuHandler.listarPersonas();
-            case 3 -> menuHandler.actualizarPersona();
-            case 4 -> menuHandler.eliminarPersona();
-            case 5 -> menuHandler.crearDomicilioIndependiente();
-            case 6 -> menuHandler.listarDomicilios();
-            case 7 -> menuHandler.actualizarDomicilioPorId();
-            case 8 -> menuHandler.eliminarDomicilioPorId();
-            case 9 -> menuHandler.actualizarDomicilioPorPersona();
-            case 10 -> menuHandler.eliminarDomicilioPorPersona();
+            case 1 -> menuHandler.crearProducto();//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+            case 2 -> menuHandler.listarProductos();//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+            case 3 -> menuHandler.actualizarProducto();//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+            case 4 -> menuHandler.eliminarProducto();//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+            case 5 -> menuHandler.crearCodBarrasIndependiente();//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+            case 6 -> menuHandler.listarCodBarras();//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+            case 7 -> menuHandler.actualizarCodBarrasPorId();//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+            case 8 -> menuHandler.eliminarCodBarrasPorId();//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+            case 9 -> menuHandler.actualizarCodBarrasPorProducto();//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+            case 10 -> menuHandler.eliminarCodBarrasPorProducto();//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
             case 0 -> {
                 System.out.println("Saliendo...");
                 running = false;
@@ -165,36 +165,36 @@ public class AppMenu {
      * Implementa inyección de dependencias manual.
      *
      * Orden de creación (bottom-up desde la capa más baja):
-     * 1. DomicilioDAO: Sin dependencias, acceso directo a BD
-     * 2. PersonaDAO: Depende de DomicilioDAO (inyectado en constructor)
-     * 3. DomicilioServiceImpl: Depende de DomicilioDAO
-     * 4. PersonaServiceImpl: Depende de PersonaDAO y DomicilioServiceImpl
+     * 1. DomicilioDAO: Sin dependencias, acceso directo a BD   //****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+     * 2. PersonaDAO: Depende de DomicilioDAO (inyectado en constructor)    //****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+     * 3. DomicilioServiceImpl: Depende de DomicilioDAO //****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+     * 4. PersonaServiceImpl: Depende de PersonaDAO y DomicilioServiceImpl  //****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
      *
      * Arquitectura resultante (4 capas):
      * Main (AppMenu, MenuHandler)
      *   ↓
-     * Service (PersonaServiceImpl, DomicilioServiceImpl)
+     * Service (PersonaServiceImpl, DomicilioServiceImpl)//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
      *   ↓
-     * DAO (PersonaDAO, DomicilioDAO)
+     * DAO (PersonaDAO, DomicilioDAO)//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
      *   ↓
-     * Models (Persona, Domicilio, Base)
+     * Models (Persona, Domicilio, Base)//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
      *
-     * ¿Por qué PersonaDAO necesita DomicilioDAO?
-     * - Actualmente NO lo usa (inyección preparada para futuras operaciones)
-     * - Podría usarse para operaciones transaccionales coordinadas
+     * ¿Por qué PersonaDAO necesita DomicilioDAO?//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+     * - Actualmente NO lo usa (inyección preparada para futuras operaciones)//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+     * - Podría usarse para operaciones transaccionales coordinadas//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
      *
-     * ¿Por qué PersonaService necesita DomicilioService?
-     * - Para insertar/actualizar domicilios al crear/actualizar personas
-     * - Para eliminar domicilios de forma segura (eliminarDomicilioDePersona)
+     * ¿Por qué PersonaService necesita DomicilioService?//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+     * - Para insertar/actualizar domicilios al crear/actualizar personas//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+     * - Para eliminar domicilios de forma segura (eliminarDomicilioDePersona)//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
      *
      * Patrón: Factory Method para construcción de dependencias
      *
      * @return ProductoServiceImpl completamente inicializado con todas sus dependencias
      */
-    private ProductoServiceImpl createPersonaService() {
-        CodigoBarrasDAO domicilioDAO = new CodigoBarrasDAO();
-        ProductoDAO personaDAO = new ProductoDAO(domicilioDAO);
-        CodigoBarrasServiceImpl domicilioService = new CodigoBarrasServiceImpl(domicilioDAO);
-        return new ProductoServiceImpl(personaDAO, domicilioService);
+    private ProductoServiceImpl createPersonaService() {    //****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+        CodigoBarrasDAO domicilioDAO = new CodigoBarrasDAO();//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+        ProductoDAO personaDAO = new ProductoDAO(domicilioDAO);//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+        CodigoBarrasServiceImpl domicilioService = new CodigoBarrasServiceImpl(domicilioDAO);//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+        return new ProductoServiceImpl(personaDAO, domicilioService);//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
     }
 }

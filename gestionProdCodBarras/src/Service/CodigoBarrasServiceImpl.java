@@ -138,10 +138,10 @@ public class CodigoBarrasServiceImpl implements GenericService<CodigoBarras> {
         if (domicilio == null) {
             throw new IllegalArgumentException("El domicilio no puede ser null");
         }
-        if (domicilio.getCalle() == null || domicilio.getCalle().trim().isEmpty()) {
+        if (domicilio.getTipo() == null || domicilio.getTipo().trim().isEmpty()) {
             throw new IllegalArgumentException("La calle no puede estar vacía");
         }
-        if (domicilio.getNumero() == null || domicilio.getNumero().trim().isEmpty()) {
+        if (domicilio.getValor() == null || domicilio.getValor().trim().isEmpty()) {
             throw new IllegalArgumentException("El número no puede estar vacío");
         }
     }

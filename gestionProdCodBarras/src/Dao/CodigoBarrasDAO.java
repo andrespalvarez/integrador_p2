@@ -145,8 +145,8 @@ public class CodigoBarrasDAO implements GenericDAO<CodigoBarras> {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(UPDATE_SQL)) {
 
-            stmt.setString(1, domicilio.getCalle());
-            stmt.setString(2, domicilio.getNumero());
+            stmt.setString(1, domicilio.getTipo());
+            stmt.setString(2, domicilio.getValor());
             stmt.setInt(3, domicilio.getId());
 
             int rowsAffected = stmt.executeUpdate();
@@ -261,8 +261,8 @@ public class CodigoBarrasDAO implements GenericDAO<CodigoBarras> {
      * @throws SQLException Si hay error al setear parámetros
      */
     private void setDomicilioParameters(PreparedStatement stmt, CodigoBarras domicilio) throws SQLException {
-        stmt.setString(1, domicilio.getCalle());
-        stmt.setString(2, domicilio.getNumero());
+        stmt.setString(1, domicilio.getTipo());
+        stmt.setString(2, domicilio.getValor());
     }
 
     /**

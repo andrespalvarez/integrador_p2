@@ -178,9 +178,9 @@ public class ProductoDAO implements GenericDAO<Producto> {
              PreparedStatement stmt = conn.prepareStatement(UPDATE_SQL)) {
 
             stmt.setString(1, persona.getNombre());
-            stmt.setString(2, persona.getApellido());
-            stmt.setString(3, persona.getDni());
-            setDomicilioId(stmt, 4, persona.getDomicilio());
+            stmt.setString(2, persona.getMarca());
+            stmt.setString(3, persona.getCategoria());
+            setDomicilioId(stmt, 4, persona.getCodBarras());
             stmt.setInt(5, persona.getId());
 
             int rowsAffected = stmt.executeUpdate();
@@ -356,9 +356,9 @@ public class ProductoDAO implements GenericDAO<Producto> {
      */
     private void setPersonaParameters(PreparedStatement stmt, Producto persona) throws SQLException {
         stmt.setString(1, persona.getNombre());
-        stmt.setString(2, persona.getApellido());
-        stmt.setString(3, persona.getDni());
-        setDomicilioId(stmt, 4, persona.getDomicilio());
+        stmt.setString(2, persona.getMarca());
+        stmt.setString(3, persona.getCategoria());
+        setDomicilioId(stmt, 4, persona.getCodBarras());
     }
 
     /**
@@ -435,17 +435,17 @@ public class ProductoDAO implements GenericDAO<Producto> {
         Producto persona = new Producto();
         persona.setId(rs.getInt("id"));
         persona.setNombre(rs.getString("nombre"));
-        persona.setApellido(rs.getString("apellido"));
-        persona.setDni(rs.getString("dni"));
+        persona.setMarca(rs.getString("apellido"));
+        persona.setCategoria(rs.getString("dni"));
 
         // Manejo correcto de LEFT JOIN: verificar si domicilio_id es NULL
         int domicilioId = rs.getInt("domicilio_id");
         if (domicilioId > 0 && !rs.wasNull()) {
             CodigoBarras domicilio = new CodigoBarras();
             domicilio.setId(rs.getInt("dom_id"));
-            domicilio.setCalle(rs.getString("calle"));
-            domicilio.setNumero(rs.getString("numero"));
-            persona.setDomicilio(domicilio);
+            domicilio.setTipo(rs.getString("calle"));
+            domicilio.setValor(rs.getString("numero"));
+            persona.setCodBarras(domicilio);
         }
 
         return persona;

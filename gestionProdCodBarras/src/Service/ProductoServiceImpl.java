@@ -38,18 +38,18 @@ public class ProductoServiceImpl implements GenericService<Producto> {
      * Constructor con inyección de dependencias.
      * Valida que ambas dependencias no sean null (fail-fast).
      *
-     * @param personaDAO DAO de personas (normalmente ProductoDAO)
+     * @param productoDAO DAO de personas (normalmente ProductoDAO)
      * @param domicilioServiceImpl Servicio de domicilios para operaciones coordinadas
      * @throws IllegalArgumentException si alguna dependencia es null
      */
-    public ProductoServiceImpl(ProductoDAO personaDAO, CodigoBarrasServiceImpl domicilioServiceImpl) {
-        if (personaDAO == null) {
+    public ProductoServiceImpl(ProductoDAO productoDAO, CodigoBarrasServiceImpl domicilioServiceImpl) {
+        if (productoDAO == null) {
             throw new IllegalArgumentException("PersonaDAO no puede ser null");
         }
         if (domicilioServiceImpl == null) {
             throw new IllegalArgumentException("DomicilioServiceImpl no puede ser null");
         }
-        this.personaDAO = personaDAO;
+        this.personaDAO = productoDAO;
         this.domicilioServiceImpl = domicilioServiceImpl;
     }
 
@@ -72,17 +72,17 @@ public class ProductoServiceImpl implements GenericService<Producto> {
      */
     @Override
     public void insertar(Producto persona) throws Exception {
-        validatePersona(persona);
-        validateDniUnique(persona.getDni(), null);
+        validateProducto(persona);
+        validateDniUnique(persona.getCategoria(), null);
 
         // Coordinación con DomicilioService (transaccional)
-        if (persona.getDomicilio() != null) {
-            if (persona.getDomicilio().getId() == 0) {
+        if (persona.getCodBarras() != null) {
+            if (persona.getCodBarras().getId() == 0) {
                 // CodigoBarras nuevo: insertar primero para obtener ID autogenerado
-                domicilioServiceImpl.insertar(persona.getDomicilio());
+                domicilioServiceImpl.insertar(persona.getCodBarras());
             } else {
                 // CodigoBarras existente: actualizar datos
-                domicilioServiceImpl.actualizar(persona.getDomicilio());
+                domicilioServiceImpl.actualizar(persona.getCodBarras());
             }
         }
 
@@ -107,11 +107,11 @@ public class ProductoServiceImpl implements GenericService<Producto> {
      */
     @Override
     public void actualizar(Producto persona) throws Exception {
-        validatePersona(persona);
+        validateProducto(persona);
         if (persona.getId() <= 0) {
             throw new IllegalArgumentException("El ID de la persona debe ser mayor a 0 para actualizar");
         }
-        validateDniUnique(persona.getDni(), persona.getId());
+        validateDniUnique(persona.getCategoria(), persona.getId());
         personaDAO.actualizar(persona);
     }
 
@@ -168,7 +168,7 @@ public class ProductoServiceImpl implements GenericService<Producto> {
      *
      * @return Instancia de CodigoBarrasServiceImpl inyectada en este servicio
      */
-    public CodigoBarrasServiceImpl getDomicilioService() {
+    public CodigoBarrasServiceImpl getCodigoBarrasService() {
         return this.domicilioServiceImpl;
     }
 
@@ -186,7 +186,7 @@ public class ProductoServiceImpl implements GenericService<Producto> {
      * @throws IllegalArgumentException Si el filtro está vacío
      * @throws Exception Si hay error de BD
      */
-    public List<Producto> buscarPorNombreApellido(String filtro) throws Exception {
+    public List<Producto> buscarPorNombreMarca(String filtro) throws Exception {
         if (filtro == null || filtro.trim().isEmpty()) {
             throw new IllegalArgumentException("El filtro de búsqueda no puede estar vacío");
         }
@@ -235,7 +235,7 @@ public class ProductoServiceImpl implements GenericService<Producto> {
      * @throws IllegalArgumentException Si los IDs son <= 0, la persona no existe, o el domicilio no pertenece a la persona
      * @throws Exception Si hay error de BD
      */
-    public void eliminarDomicilioDePersona(int personaId, int domicilioId) throws Exception {
+    public void eliminarCodigoBarrasDeProducto(int personaId, int domicilioId) throws Exception {
         if (personaId <= 0 || domicilioId <= 0) {
             throw new IllegalArgumentException("Los IDs deben ser mayores a 0");
         }
@@ -245,12 +245,12 @@ public class ProductoServiceImpl implements GenericService<Producto> {
             throw new IllegalArgumentException("Persona no encontrada con ID: " + personaId);
         }
 
-        if (persona.getDomicilio() == null || persona.getDomicilio().getId() != domicilioId) {
+        if (persona.getCodBarras() == null || persona.getCodBarras().getId() != domicilioId) {
             throw new IllegalArgumentException("El domicilio no pertenece a esta persona");
         }
 
         // Secuencia transaccional: actualizar FK → eliminar domicilio
-        persona.setDomicilio(null);
+        persona.setCodBarras(null);
         personaDAO.actualizar(persona);
         domicilioServiceImpl.eliminar(domicilioId);
     }
@@ -265,17 +265,17 @@ public class ProductoServiceImpl implements GenericService<Producto> {
      * @param persona Producto a validar
      * @throws IllegalArgumentException Si alguna validación falla
      */
-    private void validatePersona(Producto persona) {
+    private void validateProducto(Producto persona) {
         if (persona == null) {
             throw new IllegalArgumentException("La persona no puede ser null");
         }
         if (persona.getNombre() == null || persona.getNombre().trim().isEmpty()) {
             throw new IllegalArgumentException("El nombre no puede estar vacío");
         }
-        if (persona.getApellido() == null || persona.getApellido().trim().isEmpty()) {
+        if (persona.getMarca() == null || persona.getMarca().trim().isEmpty()) {
             throw new IllegalArgumentException("El apellido no puede estar vacío");
         }
-        if (persona.getDni() == null || persona.getDni().trim().isEmpty()) {
+        if (persona.getCategoria() == null || persona.getCategoria().trim().isEmpty()) {
             throw new IllegalArgumentException("El DNI no puede estar vacío");
         }
     }

@@ -68,7 +68,7 @@ public class Producto extends Base {
         this.nombre = nombre;
     }
 
-    public String getApellido() {
+    public String getMarca() {
         return apellido;
     }
 
@@ -76,11 +76,11 @@ public class Producto extends Base {
      * Establece el apellido de la persona.
      * Validación: PersonaServiceImpl verifica que no esté vacío.
      */
-    public void setApellido(String apellido) {
+    public void setMarca(String apellido) {
         this.apellido = apellido;
     }
 
-    public String getDni() {
+    public String getCategoria() {
         return dni;
     }
 
@@ -88,11 +88,11 @@ public class Producto extends Base {
      * Establece el DNI de la persona.
      * Validación: PersonaServiceImpl verifica que sea único en insert/update.
      */
-    public void setDni(String dni) {
+    public void setCategoria(String dni) {
         this.dni = dni;
     }
 
-    public CodigoBarras getDomicilio() {
+    public CodigoBarras getCodBarras() {
         return domicilio;
     }
 
@@ -100,7 +100,7 @@ public class Producto extends Base {
      * Asocia o desasocia un domicilio a la persona.
      * Si domicilio es null, la FK domicilio_id será NULL en la BD.
      */
-    public void setDomicilio(CodigoBarras domicilio) {
+    public void setCodBarras(CodigoBarras domicilio) {
         this.domicilio = domicilio;
     }
 

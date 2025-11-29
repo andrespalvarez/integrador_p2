@@ -58,7 +58,7 @@ public class CodigoBarras extends Base {
      * Obtiene el nombre de la calle.
      * @return Nombre de la calle
      */
-    public String getCalle() {
+    public String getTipo() {
         return calle;
     }
 
@@ -68,7 +68,7 @@ public class CodigoBarras extends Base {
      *
      * @param calle Nuevo nombre de la calle
      */
-    public void setCalle(String calle) {
+    public void setTipo(String calle) {
         this.calle = calle;
     }
 
@@ -76,7 +76,7 @@ public class CodigoBarras extends Base {
      * Obtiene el número de la dirección.
      * @return Número de la dirección
      */
-    public String getNumero() {
+    public String getValor() {
         return numero;
     }
 
@@ -86,7 +86,7 @@ public class CodigoBarras extends Base {
      *
      * @param numero Nuevo número
      */
-    public void setNumero(String numero) {
+    public void setValor(String numero) {
         this.numero = numero;
     }
 
