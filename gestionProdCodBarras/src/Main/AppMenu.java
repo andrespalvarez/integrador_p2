@@ -63,7 +63,7 @@ public class AppMenu {
      */
     public AppMenu() {
         this.scanner = new Scanner(System.in);
-        ProductoServiceImpl personaService = createPersonaService();    //****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+        ProductoServiceImpl personaService = createProductoService();    //****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
         this.menuHandler = new MenuHandler(scanner, personaService);    //****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
         this.running = true;
     }
@@ -142,16 +142,16 @@ public class AppMenu {
      */
     private void processOption(int opcion) {
         switch (opcion) {
-            case 1 -> menuHandler.crearProducto();//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-            case 2 -> menuHandler.listarProductos();//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-            case 3 -> menuHandler.actualizarProducto();//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-            case 4 -> menuHandler.eliminarProducto();//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-            case 5 -> menuHandler.crearCodBarrasIndependiente();//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-            case 6 -> menuHandler.listarCodBarras();//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-            case 7 -> menuHandler.actualizarCodBarrasPorId();//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-            case 8 -> menuHandler.eliminarCodBarrasPorId();//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-            case 9 -> menuHandler.actualizarCodBarrasPorProducto();//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-            case 10 -> menuHandler.eliminarCodBarrasPorProducto();//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+            case 1 -> menuHandler.crearProducto();
+            case 2 -> menuHandler.listarProductos();
+            case 3 -> menuHandler.actualizarProducto();
+            case 4 -> menuHandler.eliminarProducto();
+            case 5 -> menuHandler.crearCodBarrasIndependiente();
+            case 6 -> menuHandler.listarCodBarras();
+            case 7 -> menuHandler.actualizarCodBarrasPorId();
+            case 8 -> menuHandler.eliminarCodBarrasPorId();
+            case 9 -> menuHandler.actualizarCodBarrasPorProducto();
+            case 10 -> menuHandler.eliminarCodBarrasPorProducto();
             case 0 -> {
                 System.out.println("Saliendo...");
                 running = false;
@@ -191,10 +191,10 @@ public class AppMenu {
      *
      * @return ProductoServiceImpl completamente inicializado con todas sus dependencias
      */
-    private ProductoServiceImpl createPersonaService() {    //****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-        CodigoBarrasDAO domicilioDAO = new CodigoBarrasDAO();//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-        ProductoDAO personaDAO = new ProductoDAO(domicilioDAO);//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-        CodigoBarrasServiceImpl domicilioService = new CodigoBarrasServiceImpl(domicilioDAO);//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-        return new ProductoServiceImpl(personaDAO, domicilioService);//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+    private ProductoServiceImpl createProductoService() {    
+        CodigoBarrasDAO codigoBarrasDAO = new CodigoBarrasDAO();
+        ProductoDAO productoDAO = new ProductoDAO(codigoBarrasDAO);
+        CodigoBarrasServiceImpl codigoBarrasService = new CodigoBarrasServiceImpl(codigoBarrasDAO);
+        return new ProductoServiceImpl(productoDAO, codigoBarrasService);
     }
 }

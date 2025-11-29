@@ -95,7 +95,7 @@ public class MenuHandler {
                 codigoBarras = crearCodBarras();
             }
 
-            Producto producto = new Producto(0, nombre, apellido, dni);//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+            Producto producto = new Producto(0, nombre, marca, categoria, precio, peso);//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
             producto.setCodBarras(codigoBarras);
             productoService.insertar(producto);
             System.out.println("Producto creado exitosamente con ID: " + producto.getId());
