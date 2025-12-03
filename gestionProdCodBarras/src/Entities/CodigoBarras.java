@@ -1,5 +1,6 @@
 package Entities;
 
+import java.time.LocalDate;
 import java.util.Objects;
 
 /**
@@ -18,32 +19,20 @@ import java.util.Objects;
  * - eliminado: BOOLEAN DEFAULT FALSE (heredado de Base)
  */
 public class CodigoBarras extends Base {
-    /**
-     * Nombre de la calle.
-     * Requerido, no puede ser null ni estar vacío.
-     */
-    private String calle;
+    
+    private String valor;              // NOT NULL
+    private String tipo;               // EAN8, EAN13, UPC
+    private LocalDate fechaAsignacion;
+    private String observaciones;
 
-    /**
-     * Número de la dirección.
-     * Puede incluir letras (ej: "123A", "S/N").
-     * Requerido, no puede ser null ni estar vacío.
-     */
-    private String numero;
-
-    /**
-     * Constructor completo para reconstruir un Domicilio desde la base de datos.
-     * Usado por PersonaDAO y DomicilioDAO al mapear ResultSet.
-     *
-     * @param id ID del domicilio en la BD
-     * @param calle Nombre de la calle
-     * @param numero Número de la dirección
-     */
-    public CodigoBarras(int id, String calle, String numero) {
-        super(id, false); // Llama al constructor de Base con eliminado=false
-        this.calle = calle;
-        this.numero = numero;
+    public CodigoBarras(int id, String valor, String tipo, LocalDate fechaAsignacion, String observaciones) {
+        super(id, false);
+        this.valor = valor;
+        this.tipo = tipo;
+        this.fechaAsignacion = fechaAsignacion;
+        this.observaciones = observaciones;
     }
+    
 
     /**
      * Constructor por defecto para crear un domicilio nuevo.
@@ -59,7 +48,7 @@ public class CodigoBarras extends Base {
      * @return Nombre de la calle
      */
     public String getTipo() {
-        return calle;
+        return tipo;
     }
 
     /**
@@ -69,7 +58,7 @@ public class CodigoBarras extends Base {
      * @param calle Nuevo nombre de la calle
      */
     public void setTipo(String calle) {
-        this.calle = calle;
+        this.tipo = tipo;
     }
 
     /**
@@ -77,7 +66,7 @@ public class CodigoBarras extends Base {
      * @return Número de la dirección
      */
     public String getValor() {
-        return numero;
+        return valor;
     }
 
     /**
@@ -86,8 +75,8 @@ public class CodigoBarras extends Base {
      *
      * @param numero Nuevo número
      */
-    public void setValor(String numero) {
-        this.numero = numero;
+    public void setValor(String valor) {
+        this.valor = valor;
     }
 
     /**
@@ -132,5 +121,13 @@ public class CodigoBarras extends Base {
     @Override
     public int hashCode() {
         return Objects.hash(calle, numero);
+    }
+
+    public String getfechaAsignacion() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public String getObservaciones() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

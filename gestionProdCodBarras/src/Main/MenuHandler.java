@@ -85,9 +85,9 @@ public class MenuHandler {
             System.out.print("Categoria: ");
             String categoria = scanner.nextLine().trim();
             System.out.print("Precio: ");
-            String precio = scanner.nextLine().trim();
+            double precio = Double.parseDouble(scanner.nextLine()); // parseado
             System.out.print("Peso: ");
-            String peso = scanner.nextLine().trim();
+            double peso = Double.parseDouble(scanner.nextLine()); // parseado
 
             CodigoBarras codigoBarras = null;
             System.out.print("¿Desea agregar un codigo de barras? (s/n): ");
@@ -152,7 +152,7 @@ public class MenuHandler {
                         ", Precio: " + p.getPrecio() + ", Peso: " + p.getPeso());
                 if (p.getCodBarras() != null) {
                     System.out.println("   Tipo: " + p.getCodBarras().getTipo() +
-                            " Valor: " + p.getCodBarras().getValor() + " Fecha: " + p.getCodBarras().getFechaimplantacion() +
+                            " Valor: " + p.getCodBarras().getValor() + " Fecha: " + p.getCodBarras().getfechaAsignacion() +
                             " Observaciones: " + p.getCodBarras().getObservaciones());
                 }
             }

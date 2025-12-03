@@ -23,7 +23,7 @@ public class ProductoServiceImpl implements GenericService<Producto> {
      * DAO para acceso a datos de personas.
      * Inyectado en el constructor (Dependency Injection).
      */
-    private final ProductoDAO personaDAO;
+    private final ProductoDAO productoDAO;
 
     /**
      * Servicio de domicilios para coordinar operaciones transaccionales.
@@ -32,25 +32,25 @@ public class ProductoServiceImpl implements GenericService<Producto> {
      * - El servicio coordina la secuencia: insertar domicilio → insertar persona
      * - Implementa eliminación segura: actualizar FK persona → eliminar domicilio
      */
-    private final CodigoBarrasServiceImpl domicilioServiceImpl;
+    private final CodigoBarrasServiceImpl codigoBarrasServiceImpl;
 
     /**
      * Constructor con inyección de dependencias.
      * Valida que ambas dependencias no sean null (fail-fast).
      *
      * @param productoDAO DAO de personas (normalmente ProductoDAO)
-     * @param domicilioServiceImpl Servicio de domicilios para operaciones coordinadas
+     * @param codigoBarrasServiceImpl Servicio de domicilios para operaciones coordinadas
      * @throws IllegalArgumentException si alguna dependencia es null
      */
-    public ProductoServiceImpl(ProductoDAO productoDAO, CodigoBarrasServiceImpl domicilioServiceImpl) {
+    public ProductoServiceImpl(ProductoDAO productoDAO, CodigoBarrasServiceImpl codigoBarrasServiceImpl) {
         if (productoDAO == null) {
-            throw new IllegalArgumentException("PersonaDAO no puede ser null");
+            throw new IllegalArgumentException("ProductoDAO no puede ser null");
         }
-        if (domicilioServiceImpl == null) {
-            throw new IllegalArgumentException("DomicilioServiceImpl no puede ser null");
+        if (codigoBarrasServiceImpl == null) {
+            throw new IllegalArgumentException("CodigoBarrasServiceImpl no puede ser null");
         }
-        this.personaDAO = productoDAO;
-        this.domicilioServiceImpl = domicilioServiceImpl;
+        this.productoDAO = productoDAO;
+        this.codigoBarrasServiceImpl = codigoBarrasServiceImpl;
     }
 
     /**
@@ -67,26 +67,26 @@ public class ProductoServiceImpl implements GenericService<Producto> {
      * IMPORTANTE: La coordinación con DomicilioService permite que el domicilio
      * obtenga su ID autogenerado ANTES de insertar la persona (necesario para la FK).
      *
-     * @param persona Producto a insertar (id será ignorado y regenerado)
+     * @param producto Producto a insertar (id será ignorado y regenerado)
      * @throws Exception Si la validación falla, el DNI está duplicado, o hay error de BD
      */
     @Override
-    public void insertar(Producto persona) throws Exception {
-        validateProducto(persona);
-        validateDniUnique(persona.getCategoria(), null);
+    public void insertar(Producto producto) throws Exception {
+        validateProducto(producto);
+        
 
         // Coordinación con DomicilioService (transaccional)
-        if (persona.getCodBarras() != null) {
-            if (persona.getCodBarras().getId() == 0) {
+        if (producto.getCodBarras() != null) {
+            if (producto.getCodBarras().getId() == 0) {
                 // CodigoBarras nuevo: insertar primero para obtener ID autogenerado
-                domicilioServiceImpl.insertar(persona.getCodBarras());
+                codigoBarrasServiceImpl.insertar(producto.getCodBarras());
             } else {
                 // CodigoBarras existente: actualizar datos
-                domicilioServiceImpl.actualizar(persona.getCodBarras());
+                codigoBarrasServiceImpl.actualizar(producto.getCodBarras());
             }
         }
 
-        personaDAO.insertar(persona);
+        productoDAO.insertar(producto);
     }
 
     /**
@@ -112,7 +112,7 @@ public class ProductoServiceImpl implements GenericService<Producto> {
             throw new IllegalArgumentException("El ID de la persona debe ser mayor a 0 para actualizar");
         }
         validateDniUnique(persona.getCategoria(), persona.getId());
-        personaDAO.actualizar(persona);
+        productoDAO.actualizar(persona);
     }
 
     /**
@@ -131,7 +131,7 @@ public class ProductoServiceImpl implements GenericService<Producto> {
         if (id <= 0) {
             throw new IllegalArgumentException("El ID debe ser mayor a 0");
         }
-        personaDAO.eliminar(id);
+        productoDAO.eliminar(id);
     }
 
     /**
@@ -147,7 +147,7 @@ public class ProductoServiceImpl implements GenericService<Producto> {
         if (id <= 0) {
             throw new IllegalArgumentException("El ID debe ser mayor a 0");
         }
-        return personaDAO.getById(id);
+        return productoDAO.getById(id);
     }
 
     /**
@@ -159,7 +159,7 @@ public class ProductoServiceImpl implements GenericService<Producto> {
      */
     @Override
     public List<Producto> getAll() throws Exception {
-        return personaDAO.getAll();
+        return productoDAO.getAll();
     }
 
     /**
@@ -169,7 +169,7 @@ public class ProductoServiceImpl implements GenericService<Producto> {
      * @return Instancia de CodigoBarrasServiceImpl inyectada en este servicio
      */
     public CodigoBarrasServiceImpl getCodigoBarrasService() {
-        return this.domicilioServiceImpl;
+        return this.codigoBarrasServiceImpl;
     }
 
     /**
@@ -190,7 +190,7 @@ public class ProductoServiceImpl implements GenericService<Producto> {
         if (filtro == null || filtro.trim().isEmpty()) {
             throw new IllegalArgumentException("El filtro de búsqueda no puede estar vacío");
         }
-        return personaDAO.buscarPorNombreApellido(filtro);
+        return productoDAO.buscarPorNombreApellido(filtro);
     }
 
     /**
@@ -210,7 +210,7 @@ public class ProductoServiceImpl implements GenericService<Producto> {
         if (dni == null || dni.trim().isEmpty()) {
             throw new IllegalArgumentException("El DNI no puede estar vacío");
         }
-        return personaDAO.buscarPorDni(dni);
+        return productoDAO.buscarPorDni(dni);
     }
 
     /**
@@ -240,7 +240,7 @@ public class ProductoServiceImpl implements GenericService<Producto> {
             throw new IllegalArgumentException("Los IDs deben ser mayores a 0");
         }
 
-        Producto persona = personaDAO.getById(personaId);
+        Producto persona = productoDAO.getById(personaId);
         if (persona == null) {
             throw new IllegalArgumentException("Persona no encontrada con ID: " + personaId);
         }
@@ -251,8 +251,8 @@ public class ProductoServiceImpl implements GenericService<Producto> {
 
         // Secuencia transaccional: actualizar FK → eliminar domicilio
         persona.setCodBarras(null);
-        personaDAO.actualizar(persona);
-        domicilioServiceImpl.eliminar(domicilioId);
+        productoDAO.actualizar(persona);
+        codigoBarrasServiceImpl.eliminar(domicilioId);
     }
 
     /**
@@ -303,7 +303,7 @@ public class ProductoServiceImpl implements GenericService<Producto> {
      * @throws Exception Si hay error de BD al buscar
      */
     private void validateDniUnique(String dni, Integer personaId) throws Exception {
-        Producto existente = personaDAO.buscarPorDni(dni);
+        Producto existente = productoDAO.buscarPorDni(dni);
         if (existente != null) {
             // Existe una persona con ese DNI
             if (personaId == null || existente.getId() != personaId) {

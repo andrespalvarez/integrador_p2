@@ -24,32 +24,38 @@ public class Producto extends Base {
     private String nombre;
 
     /** Apellido de la persona. Requerido, no puede ser null ni vacío. */
-    private String apellido;
+    private String marca;
 
     /**
      * DNI de la persona. Requerido, no puede ser null ni vacío.
      * ÚNICO en el sistema (validado en BD y en PersonaServiceImpl.validateDniUnique()).
      */
-    private String dni;
+    private String categoria;
+    
+    private double precio; //NOT NULL
+    
+    private double peso; 
 
     /**
      * Domicilio asociado a la persona.
      * Puede ser null (persona sin domicilio).
      * Se carga mediante LEFT JOIN en PersonaDAO.
      */
-    private CodigoBarras domicilio;
+    private CodigoBarras codigoBarras;
 
     /**
      * Constructor completo para reconstruir una Persona desde la BD.
      * Usado por PersonaDAO al mapear ResultSet.
      * El domicilio se asigna posteriormente con setDomicilio().
      */
-    public Producto(int id, String nombre, String apellido, String dni) {
+    public Producto(int id, String nombre, String marca, String categoria, double precio, double peso ) {    
         super(id, false);
         this.nombre = nombre;
-        this.apellido = apellido;
-        this.dni = dni;
-    }
+        this.marca = marca;
+        this.categoria = categoria;
+        this.precio = precio;
+        this.peso = peso;
+        }
 
     /** Constructor por defecto para crear una persona nueva sin ID. */
     public Producto() {
@@ -69,7 +75,7 @@ public class Producto extends Base {
     }
 
     public String getMarca() {
-        return apellido;
+        return marca;
     }
 
     /**
@@ -77,11 +83,11 @@ public class Producto extends Base {
      * Validación: PersonaServiceImpl verifica que no esté vacío.
      */
     public void setMarca(String apellido) {
-        this.apellido = apellido;
+        this.marca = marca;
     }
 
     public String getCategoria() {
-        return dni;
+        return categoria;
     }
 
     /**
@@ -89,11 +95,11 @@ public class Producto extends Base {
      * Validación: PersonaServiceImpl verifica que sea único en insert/update.
      */
     public void setCategoria(String dni) {
-        this.dni = dni;
+        this.categoria = categoria;
     }
 
     public CodigoBarras getCodBarras() {
-        return domicilio;
+        return codigoBarras;
     }
 
     /**
@@ -101,40 +107,57 @@ public class Producto extends Base {
      * Si domicilio es null, la FK domicilio_id será NULL en la BD.
      */
     public void setCodBarras(CodigoBarras domicilio) {
-        this.domicilio = domicilio;
+        this.codigoBarras = domicilio;
     }
 
     @Override
     public String toString() {
-        return "Persona{" +
-                "id=" + getId() +
-                ", nombre='" + nombre + '\'' +
-                ", apellido='" + apellido + '\'' +
-                ", dni='" + dni + '\'' +
-                ", domicilio=" + domicilio +
+        return "Producto [id=" + getId() +
+                ", nombre=" + nombre +
+                ", marca=" + marca +
+                ", precio=" + precio +
                 ", eliminado=" + isEliminado() +
-                '}';
+                ", codigoBarras=" + (codigoBarras != null ? codigoBarras.getValor() : "N/A") + 
+                "]";
     }
 
-    /**
-     * Compara dos personas por DNI (identificador único).
-     * Dos personas son iguales si tienen el mismo DNI.
-     * Correcto porque DNI es único en el sistema.
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Producto persona = (Producto) o;
-        return Objects.equals(dni, persona.dni);
+
+
+//    /**
+//     * Compara dos personas por DNI (identificador único).
+//     * Dos personas son iguales si tienen el mismo DNI.
+//     * Correcto porque DNI es único en el sistema.
+//     */
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//        Producto persona = (Producto) o;
+//        return Objects.equals(dni, persona.dni);
+//    }
+//
+//    /**
+//     * Hash code basado en DNI.
+//     * Consistente con equals(): personas con mismo DNI tienen mismo hash.
+//     */
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(dni);
+//    }
+
+    public String getPrecio() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
-    /**
-     * Hash code basado en DNI.
-     * Consistente con equals(): personas con mismo DNI tienen mismo hash.
-     */
-    @Override
-    public int hashCode() {
-        return Objects.hash(dni);
+    public String getPeso() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public void setPrecio(String precio) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public void setPeso(String peso) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

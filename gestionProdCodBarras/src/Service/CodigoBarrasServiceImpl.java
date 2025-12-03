@@ -22,20 +22,20 @@ public class CodigoBarrasServiceImpl implements GenericService<CodigoBarras> {
      * Inyectado en el constructor (Dependency Injection).
      * Usa GenericDAO para permitir testing con mocks.
      */
-    private final GenericDAO<CodigoBarras> domicilioDAO;
+    private final GenericDAO<CodigoBarras> codigoBarrasDAO;
 
     /**
      * Constructor con inyección de dependencias.
      * Valida que el DAO no sea null (fail-fast).
      *
-     * @param domicilioDAO DAO de domicilios (normalmente DomicilioDAO)
-     * @throws IllegalArgumentException si domicilioDAO es null
+     * @param codigoBarrasDAO DAO de domicilios (normalmente DomicilioDAO)
+     * @throws IllegalArgumentException si codigoBarrasDAO es null
      */
-    public CodigoBarrasServiceImpl(GenericDAO<CodigoBarras> domicilioDAO) {
-        if (domicilioDAO == null) {
-            throw new IllegalArgumentException("DomicilioDAO no puede ser null");
+    public CodigoBarrasServiceImpl(GenericDAO<CodigoBarras> codigoBarrasDAO) {
+        if (codigoBarrasDAO == null) {
+            throw new IllegalArgumentException("CodigoBarrasDAO no puede ser null");
         }
-        this.domicilioDAO = domicilioDAO;
+        this.codigoBarrasDAO = codigoBarrasDAO;
     }
 
     /**
@@ -46,13 +46,13 @@ public class CodigoBarrasServiceImpl implements GenericService<CodigoBarras> {
      * 2. Delega al DAO para insertar
      * 3. El DAO asigna el ID autogenerado al objeto domicilio
      *
-     * @param domicilio CodigoBarras a insertar (id será ignorado y regenerado)
+     * @param codigoBarras CodigoBarras a insertar (id será ignorado y regenerado)
      * @throws Exception Si la validación falla o hay error de BD
      */
     @Override
-    public void insertar(CodigoBarras domicilio) throws Exception {
-        validateDomicilio(domicilio);
-        domicilioDAO.insertar(domicilio);
+    public void insertar(CodigoBarras codigoBarras) throws Exception {
+        validateCodigoBarras(codigoBarras);
+        codigoBarrasDAO.insertar(codigoBarras);
     }
 
     /**
@@ -69,12 +69,12 @@ public class CodigoBarrasServiceImpl implements GenericService<CodigoBarras> {
      * @throws Exception Si la validación falla o el domicilio no existe
      */
     @Override
-    public void actualizar(CodigoBarras domicilio) throws Exception {
-        validateDomicilio(domicilio);
-        if (domicilio.getId() <= 0) {
-            throw new IllegalArgumentException("El ID del domicilio debe ser mayor a 0 para actualizar");
+    public void actualizar(CodigoBarras codigoBarras) throws Exception {
+        validateCodigoBarras(codigoBarras);
+        if (codigoBarras.getId() <= 0) {
+            throw new IllegalArgumentException("El ID del Código de Barras debe ser mayor a 0 para actualizar");
         }
-        domicilioDAO.actualizar(domicilio);
+        codigoBarrasDAO.actualizar(codigoBarras);
     }
 
     /**
@@ -95,7 +95,7 @@ public class CodigoBarrasServiceImpl implements GenericService<CodigoBarras> {
         if (id <= 0) {
             throw new IllegalArgumentException("El ID debe ser mayor a 0");
         }
-        domicilioDAO.eliminar(id);
+        codigoBarrasDAO.eliminar(id);
     }
 
     /**
@@ -110,7 +110,7 @@ public class CodigoBarrasServiceImpl implements GenericService<CodigoBarras> {
         if (id <= 0) {
             throw new IllegalArgumentException("El ID debe ser mayor a 0");
         }
-        return domicilioDAO.getById(id);
+        return codigoBarrasDAO.getById(id);
     }
 
     /**
@@ -121,7 +121,7 @@ public class CodigoBarrasServiceImpl implements GenericService<CodigoBarras> {
      */
     @Override
     public List<CodigoBarras> getAll() throws Exception {
-        return domicilioDAO.getAll();
+        return codigoBarrasDAO.getAll();
     }
 
     /**
@@ -134,15 +134,16 @@ public class CodigoBarrasServiceImpl implements GenericService<CodigoBarras> {
      * @param domicilio CodigoBarras a validar
      * @throws IllegalArgumentException Si alguna validación falla
      */
-    private void validateDomicilio(CodigoBarras domicilio) {
-        if (domicilio == null) {
-            throw new IllegalArgumentException("El domicilio no puede ser null");
+    private void validateCodigoBarras(CodigoBarras codigoBarras) {
+        if (codigoBarras == null) {
+            throw new IllegalArgumentException("El Código de Barras no puede ser null");
         }
-        if (domicilio.getTipo() == null || domicilio.getTipo().trim().isEmpty()) {
-            throw new IllegalArgumentException("La calle no puede estar vacía");
+        // Validar campos obligatorios: tipo y valor [cite: 131]
+        if (codigoBarras.getTipo() == null) {
+            throw new IllegalArgumentException("El tipo de Código de Barras es obligatorio");
         }
-        if (domicilio.getValor() == null || domicilio.getValor().trim().isEmpty()) {
-            throw new IllegalArgumentException("El número no puede estar vacío");
+        if (codigoBarras.getValor() == null || codigoBarras.getValor().trim().isEmpty()) {
+            throw new IllegalArgumentException("El valor del Código de Barras es obligatorio");
         }
     }
 }
