@@ -1,53 +1,39 @@
 package Entities;
 
-import java.util.Objects;
-
 /**
- * Entidad que representa una persona en el sistema.
+ * Entidad que representa un producto en el sistema.
  * Hereda de Base para obtener id y eliminado.
  *
- * Relación con Domicilio:
- * - Una Persona puede tener 0 o 1 Domicilio (relación opcional)
- * - Se relaciona mediante FK domicilio_id en la tabla personas
+ * Relación con CodigoBarras:
+ * - Un Producto puede tener 0 o 1 CodigoBarras (relación opcional)
+ * - Se relaciona mediante FK codigoBarras en la tabla personas
  *
- * Tabla BD: personas
+ * Tabla BD: producto
  * Campos:
- * - id: INT AUTO_INCREMENT PRIMARY KEY (heredado de Base)
- * - nombre: VARCHAR(50) NOT NULL
- * - apellido: VARCHAR(50) NOT NULL
- * - dni: VARCHAR(20) NOT NULL UNIQUE (regla de negocio RN-001)
- * - domicilio_id: INT NULL (FK a domicilios)
- * - eliminado: BOOLEAN DEFAULT FALSE (heredado de Base)
+ *id INT AUTO_INCREMENT PRIMARY KEY,
+ *eliminado bool,
+ *nombre varchar(120) NOT NULL,
+ *marca varchar(80),
+ *categoria varchar(80),
+ *precio double(10,2) NOT NULL,
+ *peso double(10,3) CHECK(peso>0),
+ *codigoBarras int UNIQUE,
  */
 public class Producto extends Base {
-    /** Nombre de la persona. Requerido, no puede ser null ni vacío. */
-    private String nombre;
-
-    /** Apellido de la persona. Requerido, no puede ser null ni vacío. */
+    
+    private String nombre; //NOT NULL
+    
     private String marca;
-
-    /**
-     * DNI de la persona. Requerido, no puede ser null ni vacío.
-     * ÚNICO en el sistema (validado en BD y en PersonaServiceImpl.validateDniUnique()).
-     */
+    
     private String categoria;
     
     private double precio; //NOT NULL
     
     private double peso; 
 
-    /**
-     * Domicilio asociado a la persona.
-     * Puede ser null (persona sin domicilio).
-     * Se carga mediante LEFT JOIN en PersonaDAO.
-     */
     private CodigoBarras codigoBarras;
 
-    /**
-     * Constructor completo para reconstruir una Persona desde la BD.
-     * Usado por PersonaDAO al mapear ResultSet.
-     * El domicilio se asigna posteriormente con setDomicilio().
-     */
+    
     public Producto(int id, String nombre, String marca, String categoria, double precio, double peso ) {    
         super(id, false);
         this.nombre = nombre;
@@ -57,8 +43,7 @@ public class Producto extends Base {
         this.peso = peso;
         }
 
-    /** Constructor por defecto para crear una persona nueva sin ID. */
-    public Producto() {
+    public Producto() { // Constructor por defecto para crear un producto nuevo sin ID.
         super();
     }
 
@@ -66,11 +51,7 @@ public class Producto extends Base {
         return nombre;
     }
 
-    /**
-     * Establece el nombre de la persona.
-     * Validación: PersonaServiceImpl verifica que no esté vacío.
-     */
-    public void setNombre(String nombre) {
+    public void setNombre(String nombre) { //verificar NOT NULL en service
         this.nombre = nombre;
     }
 
@@ -78,10 +59,6 @@ public class Producto extends Base {
         return marca;
     }
 
-    /**
-     * Establece el apellido de la persona.
-     * Validación: PersonaServiceImpl verifica que no esté vacío.
-     */
     public void setMarca(String apellido) {
         this.marca = marca;
     }
@@ -90,10 +67,6 @@ public class Producto extends Base {
         return categoria;
     }
 
-    /**
-     * Establece el DNI de la persona.
-     * Validación: PersonaServiceImpl verifica que sea único en insert/update.
-     */
     public void setCategoria(String dni) {
         this.categoria = categoria;
     }
@@ -103,15 +76,15 @@ public class Producto extends Base {
     }
 
     /**
-     * Asocia o desasocia un domicilio a la persona.
-     * Si domicilio es null, la FK domicilio_id será NULL en la BD.
+     * Asocia o desasocia un codigo de barra al producto.
+     * Si codigoBarras es null, la FK codigoBarras será NULL en la BD.
      */
-    public void setCodBarras(CodigoBarras domicilio) {
-        this.codigoBarras = domicilio;
+    public void setCodBarras(CodigoBarras codigoBarras) {
+        this.codigoBarras = codigoBarras;
     }
 
     @Override
-    public String toString() {
+    public String toString() {      //toString
         return "Producto [id=" + getId() +
                 ", nombre=" + nombre +
                 ", marca=" + marca +
@@ -122,42 +95,19 @@ public class Producto extends Base {
     }
 
 
-
-//    /**
-//     * Compara dos personas por DNI (identificador único).
-//     * Dos personas son iguales si tienen el mismo DNI.
-//     * Correcto porque DNI es único en el sistema.
-//     */
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) return true;
-//        if (o == null || getClass() != o.getClass()) return false;
-//        Producto persona = (Producto) o;
-//        return Objects.equals(dni, persona.dni);
-//    }
-//
-//    /**
-//     * Hash code basado en DNI.
-//     * Consistente con equals(): personas con mismo DNI tienen mismo hash.
-//     */
-//    @Override
-//    public int hashCode() {
-//        return Objects.hash(dni);
-//    }
-
-    public String getPrecio() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public double getPrecio() {
+        return precio;
     }
 
-    public String getPeso() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public double getPeso() {
+        return peso;
     }
 
-    public void setPrecio(String precio) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void setPrecio(double precio) {  //verificar NOT NULL en service
+        this.precio = precio;
     }
 
-    public void setPeso(String peso) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void setPeso(double peso) {
+        this.peso = peso;
     }
 }

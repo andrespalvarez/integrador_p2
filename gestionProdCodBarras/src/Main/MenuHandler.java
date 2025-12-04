@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Scanner;
 import Entities.CodigoBarras;
 import Service.ProductoServiceImpl;
+import java.time.LocalDate;
 
 /**
  * Controlador de las operaciones del menú (Menu Handler).
@@ -217,14 +218,14 @@ public class MenuHandler {
             }
             
             System.out.print("Nuevo precio (actual: " + p.getPrecio() + ", Enter para mantener): ");
-            String precio = scanner.nextLine().trim();
-            if (!precio.isEmpty()) {
+            double precio = scanner.nextDouble();
+            if (precio!=Double.NaN) {
                 p.setPrecio(precio);
             }
             
             System.out.print("Nuevo peso (actual: " + p.getPeso() + ", Enter para mantener): ");
-            String peso = scanner.nextLine().trim();
-            if (!peso.isEmpty()) {
+            double peso = scanner.nextDouble();
+            if (peso!=Double.NaN) {
                 p.setPeso(peso);
             }
 
@@ -519,11 +520,16 @@ public class MenuHandler {
      * @return CodigoBarras nuevo (no persistido, ID=0)
      */
     private CodigoBarras crearCodBarras() {
-        System.out.print("Calle: ");
-        String calle = scanner.nextLine().trim();
-        System.out.print("Numero: ");
-        String numero = scanner.nextLine().trim();
-        return new CodigoBarras(0, calle, numero);
+        System.out.print("Valor: ");
+        String valor = scanner.nextLine().trim();
+        System.out.print("Tipo: ");
+        String tipo = scanner.nextLine().trim();
+        System.out.print("Fecha Asignación: ");
+        LocalDate fechaAsignacion = LocalDate.parse(scanner.nextLine().trim());
+        System.out.print("Observaciones: ");
+        String observaciones = scanner.nextLine().trim();
+        
+        return new CodigoBarras(0, valor, tipo, fechaAsignacion, observaciones);
     }
 
     /**

@@ -4,19 +4,21 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 /**
- * Entidad que representa un domicilio (dirección) en el sistema.
+ * Entidad que representa un codigo de barras en el sistema.
  * Hereda de Base para obtener id y eliminado.
  *
- * Relación con Persona:
- * - Una Persona puede tener 0 o 1 Domicilio
- * - Un Domicilio puede estar asociado a múltiples Personas (relación N:1 desde Persona)
+ * Relación con Producto:
+ * - Un Producto puede tener 0 o 1 Codigo de Barras
+ * - Un Codigo de barras puede estar asociado UN UNICO codigo de barras
  *
- * Tabla BD: domicilios
+ * Tabla BD: codigobarras
  * Campos:
- * - id: INT AUTO_INCREMENT PRIMARY KEY (heredado de Base)
- * - calle: VARCHAR(100) NOT NULL
- * - numero: VARCHAR(10) NOT NULL
- * - eliminado: BOOLEAN DEFAULT FALSE (heredado de Base)
+ * id INT AUTO_INCREMENT PRIMARY KEY,
+ * eliminado bool,
+ * tipo enum ('EAN13','EAN8','UPC') NOT NULL,
+ * valor varchar(20) NOT NULL UNIQUE,
+ * fechaImplantacion date,
+ * observaciones varchar(255) 
  */
 public class CodigoBarras extends Base {
     
@@ -33,101 +35,44 @@ public class CodigoBarras extends Base {
         this.observaciones = observaciones;
     }
     
-
-    /**
-     * Constructor por defecto para crear un domicilio nuevo.
-     * El ID será asignado por la BD al insertar.
-     * El flag eliminado se inicializa en false por Base.
-     */
-    public CodigoBarras() {
+    public CodigoBarras() { // Constructor por defecto para crear un codigo de barras nuevo sin ID.
         super();
     }
 
-    /**
-     * Obtiene el nombre de la calle.
-     * @return Nombre de la calle
-     */
     public String getTipo() {
         return tipo;
     }
 
-    /**
-     * Establece el nombre de la calle.
-     * Validación: DomicilioServiceImpl verifica que no esté vacío.
-     *
-     * @param calle Nuevo nombre de la calle
-     */
     public void setTipo(String calle) {
         this.tipo = tipo;
     }
 
-    /**
-     * Obtiene el número de la dirección.
-     * @return Número de la dirección
-     */
     public String getValor() {
         return valor;
     }
 
-    /**
-     * Establece el número de la dirección.
-     * Validación: DomicilioServiceImpl verifica que no esté vacío.
-     *
-     * @param numero Nuevo número
-     */
     public void setValor(String valor) {
         this.valor = valor;
     }
 
-    /**
-     * Representación en texto del domicilio.
-     * Útil para debugging y logging.
-     *
-     * @return String con todos los campos del domicilio
-     */
+
     @Override
     public String toString() {
-        return "Domicilio{" +
+        return "CodigoBarras{" +
                 "id=" + getId() +
-                ", calle='" + calle + '\'' +
-                ", numero='" + numero + '\'' +
+                ", tipo='" + tipo + '\'' +
+                ", valor='" + valor + '\'' +
+                ", fechaAsignacion='" + fechaAsignacion + '\'' +
+                ", observaciones='" + observaciones + '\'' +
                 ", eliminado=" + isEliminado() +
                 '}';
     }
 
-    /**
-     * Compara dos domicilios por igualdad SEMÁNTICA.
-     * Dos domicilios son iguales si tienen la misma calle y número.
-     * Nota: NO se compara por ID, permitiendo detectar direcciones duplicadas.
-     *
-     * @param o Objeto a comparar
-     * @return true si los domicilios tienen la misma calle y número
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CodigoBarras domicilio = (CodigoBarras) o;
-        return Objects.equals(calle, domicilio.calle) &&
-               Objects.equals(numero, domicilio.numero);
-    }
-
-    /**
-     * Calcula el hash code basado en calle y número.
-     * Consistente con equals(): domicilios con misma calle/número tienen mismo hash.
-     *
-     * @return Hash code del domicilio
-     */
-    @Override
-    public int hashCode() {
-        return Objects.hash(calle, numero);
-    }
-
-    public String getfechaAsignacion() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public LocalDate getfechaAsignacion() {
+        return fechaAsignacion;
     }
 
     public String getObservaciones() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return observaciones;
     }
 }
