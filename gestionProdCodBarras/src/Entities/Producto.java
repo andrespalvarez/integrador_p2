@@ -1,7 +1,7 @@
 package Entities;
 
 /**
- * Entidad que representa un producto en el sistema.
+ * Entidad que representa un productocategoria en el sistema.
  * Hereda de Base para obtener id y eliminado.
  *
  * Relación con CodigoBarras:

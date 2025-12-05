@@ -31,7 +31,7 @@ public class CodigoBarrasDAO implements GenericDAO<CodigoBarras> {
      * El id es AUTO_INCREMENT y se obtiene con RETURN_GENERATED_KEYS.
      * El campo eliminado tiene DEFAULT FALSE en la BD.
      */
-    private static final String INSERT_SQL = "INSERT INTO domicilios (calle, numero) VALUES (?, ?)";
+    private static final String INSERT_SQL = "INSERT INTO codigobarras (tipo, valor, fechaImplantacion, observaciones) VALUES (?, ?, ?, ?)";
 
     /**
      * Query de actualización de domicilio.
@@ -41,7 +41,7 @@ public class CodigoBarrasDAO implements GenericDAO<CodigoBarras> {
      * ⚠️ IMPORTANTE: Si varias personas comparten este domicilio,
      * la actualización los afectará a TODAS (RN-040).
      */
-    private static final String UPDATE_SQL = "UPDATE domicilios SET calle = ?, numero = ? WHERE id = ?";
+    private static final String UPDATE_SQL = "UPDATE codigobarras SET tipo = ?, valor = ?, fechaAsignacion = ?, observaciones = ?  WHERE id = ?";
 
     /**
      * Query de soft delete.
@@ -52,21 +52,21 @@ public class CodigoBarrasDAO implements GenericDAO<CodigoBarras> {
      * Puede dejar FKs huérfanas (personas.domicilio_id apuntando a domicilio eliminado).
      * ALTERNATIVA SEGURA: PersonaServiceImpl.eliminarDomicilioDePersona()
      */
-    private static final String DELETE_SQL = "UPDATE domicilios SET eliminado = TRUE WHERE id = ?";
+    private static final String DELETE_SQL = "UPDATE codigobarras SET eliminado = TRUE WHERE id = ?";
 
     /**
      * Query para obtener domicilio por ID.
      * Solo retorna domicilios activos (eliminado=FALSE).
      * SELECT * es aceptable aquí porque Domicilio tiene solo 4 columnas.
      */
-    private static final String SELECT_BY_ID_SQL = "SELECT * FROM domicilios WHERE id = ? AND eliminado = FALSE";
+    private static final String SELECT_BY_ID_SQL = "SELECT * FROM codigobarras WHERE id = ? AND eliminado = FALSE";
 
     /**
      * Query para obtener todos los domicilios activos.
      * Filtra por eliminado=FALSE (solo domicilios activos).
      * SELECT * es aceptable aquí porque Domicilio tiene solo 4 columnas.
      */
-    private static final String SELECT_ALL_SQL = "SELECT * FROM domicilios WHERE eliminado = FALSE";
+    private static final String SELECT_ALL_SQL = "SELECT * FROM codigobarras WHERE eliminado = FALSE";
 
     /**
      * Inserta un domicilio en la base de datos (versión sin transacción).
@@ -88,14 +88,14 @@ public class CodigoBarrasDAO implements GenericDAO<CodigoBarras> {
      * @throws SQLException Si falla la inserción o no se obtiene ID generado
      */
     @Override
-    public void insertar(CodigoBarras domicilio) throws SQLException {
+    public void insertar(CodigoBarras codigoBarras) throws SQLException {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS)) {
 
-            setDomicilioParameters(stmt, domicilio);
+            setCodigoBarrasParameters(stmt, codigoBarras);
             stmt.executeUpdate();
 
-            setGeneratedId(stmt, domicilio);
+            setGeneratedId(stmt, codigoBarras);
         }
     }
 
@@ -113,11 +113,11 @@ public class CodigoBarrasDAO implements GenericDAO<CodigoBarras> {
      * @throws Exception Si falla la inserción
      */
     @Override
-    public void insertTx(CodigoBarras domicilio, Connection conn) throws Exception {
+    public void insertTx(CodigoBarras codigobarras, Connection conn) throws Exception {
         try (PreparedStatement stmt = conn.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS)) {
-            setDomicilioParameters(stmt, domicilio);
+            setCodigoBarrasParameters(stmt, codigobarras);
             stmt.executeUpdate();
-            setGeneratedId(stmt, domicilio);
+            setGeneratedId(stmt, codigobarras);
         }
     }
 
@@ -141,17 +141,17 @@ public class CodigoBarrasDAO implements GenericDAO<CodigoBarras> {
      * @throws SQLException Si el domicilio no existe o hay error de BD
      */
     @Override
-    public void actualizar(CodigoBarras domicilio) throws SQLException {
+    public void actualizar(CodigoBarras codigoBarras) throws SQLException {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(UPDATE_SQL)) {
 
-            stmt.setString(1, domicilio.getTipo());
-            stmt.setString(2, domicilio.getValor());
-            stmt.setInt(3, domicilio.getId());
+            stmt.setString(1, codigoBarras.getTipo());
+            stmt.setString(2, codigoBarras.getValor());
+            stmt.setInt(3, codigoBarras.getId());
 
             int rowsAffected = stmt.executeUpdate();
             if (rowsAffected == 0) {
-                throw new SQLException("No se pudo actualizar el domicilio con ID: " + domicilio.getId());
+                throw new SQLException("No se pudo actualizar el codigobarras con ID: " + codigoBarras.getId());
             }
         }
     }
@@ -192,7 +192,7 @@ public class CodigoBarrasDAO implements GenericDAO<CodigoBarras> {
             int rowsAffected = stmt.executeUpdate();
 
             if (rowsAffected == 0) {
-                throw new SQLException("No se encontró domicilio con ID: " + id);
+                throw new SQLException("No se encontró codigobarras con ID: " + id);
             }
         }
     }
@@ -214,7 +214,7 @@ public class CodigoBarrasDAO implements GenericDAO<CodigoBarras> {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return mapResultSetToDomicilio(rs);
+                    return mapResultSetToCodigoBarras(rs);
                 }
             }
         }
@@ -234,18 +234,18 @@ public class CodigoBarrasDAO implements GenericDAO<CodigoBarras> {
      */
     @Override
     public List<CodigoBarras> getAll() throws SQLException {
-        List<CodigoBarras> domicilios = new ArrayList<>();
+        List<CodigoBarras> codigosBarras = new ArrayList<>();
 
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(SELECT_ALL_SQL)) {
 
             while (rs.next()) {
-                domicilios.add(mapResultSetToDomicilio(rs));
+                codigosBarras.add(mapResultSetToCodigoBarras(rs));
             }
         }
 
-        return domicilios;
+        return codigosBarras;
     }
 
     /**
@@ -260,9 +260,9 @@ public class CodigoBarrasDAO implements GenericDAO<CodigoBarras> {
      * @param domicilio CodigoBarras con los datos a insertar
      * @throws SQLException Si hay error al setear parámetros
      */
-    private void setDomicilioParameters(PreparedStatement stmt, CodigoBarras domicilio) throws SQLException {
-        stmt.setString(1, domicilio.getTipo());
-        stmt.setString(2, domicilio.getValor());
+    private void setCodigoBarrasParameters(PreparedStatement stmt, CodigoBarras codigoBarras) throws SQLException {
+        stmt.setString(1, codigoBarras.getTipo());
+        stmt.setString(2, codigoBarras.getValor());
     }
 
     /**
@@ -280,10 +280,10 @@ public class CodigoBarrasDAO implements GenericDAO<CodigoBarras> {
      * @param domicilio Objeto domicilio a actualizar con el ID generado
      * @throws SQLException Si no se pudo obtener el ID generado (indica problema grave)
      */
-    private void setGeneratedId(PreparedStatement stmt, CodigoBarras domicilio) throws SQLException {
+    private void setGeneratedId(PreparedStatement stmt, CodigoBarras codigoBarras) throws SQLException {
         try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
             if (generatedKeys.next()) {
-                domicilio.setId(generatedKeys.getInt(1));
+                codigoBarras.setId(generatedKeys.getInt(1));
             } else {
                 throw new SQLException("La inserción del domicilio falló, no se obtuvo ID generado");
             }
@@ -306,11 +306,13 @@ public class CodigoBarrasDAO implements GenericDAO<CodigoBarras> {
      * @return CodigoBarras reconstruido
      * @throws SQLException Si hay error al leer columnas del ResultSet
      */
-    private CodigoBarras mapResultSetToDomicilio(ResultSet rs) throws SQLException {
+    private CodigoBarras mapResultSetToCodigoBarras(ResultSet rs) throws SQLException {
         return new CodigoBarras(
             rs.getInt("id"),
-            rs.getString("calle"),
-            rs.getString("numero")
+            rs.getString("tipo"),
+            rs.getString("valor"),    
+            rs.getDate("fechaAsignacion").toLocalDate(),
+            rs.getString("observaciones")
         );
     }
 }

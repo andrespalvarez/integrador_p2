@@ -28,21 +28,21 @@ public class ProductoDAO implements GenericDAO<Producto> {
      * Inserta nombre, apellido, dni y FK domicilio_id.
      * El id es AUTO_INCREMENT y se obtiene con RETURN_GENERATED_KEYS.
      */
-    private static final String INSERT_SQL = "INSERT INTO personas (nombre, apellido, dni, domicilio_id) VALUES (?, ?, ?, ?)";
+    private static final String INSERT_SQL = "INSERT INTO producto (nombre, marca, categoria, precio, peso, codigoBarras) VALUES (?, ?, ?, ?, ?, ? )";
 
     /**
      * Query de actualización de persona.
      * Actualiza nombre, apellido, dni y FK domicilio_id por id.
      * NO actualiza el flag eliminado (solo se modifica en soft delete).
      */
-    private static final String UPDATE_SQL = "UPDATE personas SET nombre = ?, apellido = ?, dni = ?, domicilio_id = ? WHERE id = ?";
+    private static final String UPDATE_SQL = "UPDATE producto SET nombre = ?, marca = ?, categoria = ?, precio = ?, peso = ?, codigoBarras = ? WHERE id = ?";
 
     /**
      * Query de soft delete.
      * Marca eliminado=TRUE sin borrar físicamente la fila.
      * Preserva integridad referencial y datos históricos.
      */
-    private static final String DELETE_SQL = "UPDATE personas SET eliminado = TRUE WHERE id = ?";
+    private static final String DELETE_SQL = "UPDATE producto SET eliminado = TRUE WHERE id = ?";
 
     /**
      * Query para obtener persona por ID.
@@ -53,9 +53,9 @@ public class ProductoDAO implements GenericDAO<Producto> {
      * - Persona: id, nombre, apellido, dni, domicilio_id
      * - Domicilio (puede ser NULL): dom_id, calle, numero
      */
-    private static final String SELECT_BY_ID_SQL = "SELECT p.id, p.nombre, p.apellido, p.dni, p.domicilio_id, " +
-            "d.id AS dom_id, d.calle, d.numero " +
-            "FROM personas p LEFT JOIN domicilios d ON p.domicilio_id = d.id " +
+    private static final String SELECT_BY_ID_SQL = "SELECT p.id, p.nombre, p.marca, p.categoria, p.codigoBarras, " +
+            "cb.id AS id, cb.tipo, cb.valor " +
+            "FROM producto p LEFT JOIN codigobarras cb ON p.codigobarras = cb.id " +
             "WHERE p.id = ? AND p.eliminado = FALSE";
 
     /**
@@ -63,9 +63,9 @@ public class ProductoDAO implements GenericDAO<Producto> {
      * LEFT JOIN con domicilios para cargar relaciones.
      * Filtra por eliminado=FALSE (solo personas activas).
      */
-    private static final String SELECT_ALL_SQL = "SELECT p.id, p.nombre, p.apellido, p.dni, p.domicilio_id, " +
-            "d.id AS dom_id, d.calle, d.numero " +
-            "FROM personas p LEFT JOIN domicilios d ON p.domicilio_id = d.id " +
+    private static final String SELECT_ALL_SQL = "SELECT p.id, p.nombre, p.marca, p.categoria, p.codigoBarras, " +
+            "cb.id AS id, cb.tipo, cb.valor " +
+            "FROM producto p LEFT JOIN codigobarras cb ON p.codigobarras = cb.id " +
             "WHERE p.eliminado = FALSE";
 
     /**
@@ -94,20 +94,20 @@ public class ProductoDAO implements GenericDAO<Producto> {
      * DAO de domicilios (actualmente no usado, pero disponible para operaciones futuras).
      * Inyectado en el constructor por si se necesita coordinar operaciones.
      */
-    private final CodigoBarrasDAO domicilioDAO;
+    private final CodigoBarrasDAO codigoBarrasDAO;
 
     /**
      * Constructor con inyección de DomicilioDAO.
      * Valida que la dependencia no sea null (fail-fast).
      *
      * @param domicilioDAO DAO de domicilios
-     * @throws IllegalArgumentException si domicilioDAO es null
+     * @throws IllegalArgumentException si codigoBarrasDAO es null
      */
-    public ProductoDAO(CodigoBarrasDAO domicilioDAO) {
-        if (domicilioDAO == null) {
+    public ProductoDAO(CodigoBarrasDAO codigoBarrasDAO) {
+        if (codigoBarrasDAO == null) {
             throw new IllegalArgumentException("DomicilioDAO no puede ser null");
         }
-        this.domicilioDAO = domicilioDAO;
+        this.codigoBarrasDAO = codigoBarrasDAO;
     }
 
     /**
@@ -122,17 +122,17 @@ public class ProductoDAO implements GenericDAO<Producto> {
      * 5. Obtiene el ID autogenerado y lo asigna a persona.id
      * 6. Cierra recursos automáticamente (try-with-resources)
      *
-     * @param persona Producto a insertar (id será ignorado y regenerado)
+     * @param producto Producto a insertar (id será ignorado y regenerado)
      * @throws Exception Si falla la inserción o no se obtiene ID generado
      */
     @Override
-    public void insertar(Producto persona) throws Exception {
+    public void insertar(Producto producto) throws Exception {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS)) {
 
-            setPersonaParameters(stmt, persona);
+            setProductoParameters(stmt, producto);
             stmt.executeUpdate();
-            setGeneratedId(stmt, persona);
+            setGeneratedId(stmt, producto);
         }
     }
 
@@ -145,16 +145,16 @@ public class ProductoDAO implements GenericDAO<Producto> {
      * - Operaciones que requieren múltiples inserts coordinados
      * - Rollback automático si alguna operación falla
      *
-     * @param persona Producto a insertar
+     * @param producto Producto a insertar
      * @param conn Conexión transaccional (NO se cierra en este método)
      * @throws Exception Si falla la inserción
      */
     @Override
-    public void insertTx(Producto persona, Connection conn) throws Exception {
+    public void insertTx(Producto producto, Connection conn) throws Exception {
         try (PreparedStatement stmt = conn.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS)) {
-            setPersonaParameters(stmt, persona);
+            setProductoParameters(stmt, producto);
             stmt.executeUpdate();
-            setGeneratedId(stmt, persona);
+            setGeneratedId(stmt, producto);
         }
     }
 
@@ -169,23 +169,23 @@ public class ProductoDAO implements GenericDAO<Producto> {
      * - Si persona.domicilio == null → domicilio_id = NULL (desasociar)
      * - Si persona.domicilio.id > 0 → domicilio_id = domicilio.id (asociar/cambiar)
      *
-     * @param persona Producto con los datos actualizados (id debe ser > 0)
-     * @throws SQLException Si la persona no existe o hay error de BD
+     * @param producto Producto con los datos actualizados (id debe ser > 0)
+     * @throws SQLException Si la producto no existe o hay error de BD
      */
     @Override
-    public void actualizar(Producto persona) throws Exception {
+    public void actualizar(Producto producto) throws Exception {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(UPDATE_SQL)) {
 
-            stmt.setString(1, persona.getNombre());
-            stmt.setString(2, persona.getMarca());
-            stmt.setString(3, persona.getCategoria());
-            setDomicilioId(stmt, 4, persona.getCodBarras());
-            stmt.setInt(5, persona.getId());
+            stmt.setString(1, producto.getNombre());
+            stmt.setString(2, producto.getMarca());
+            stmt.setString(3, producto.getCategoria());
+            setCodigoBarrasId(stmt, 4, producto.getCodBarras());
+            stmt.setInt(5, producto.getId());
 
             int rowsAffected = stmt.executeUpdate();
             if (rowsAffected == 0) {
-                throw new SQLException("No se pudo actualizar la persona con ID: " + persona.getId());
+                throw new SQLException("No se pudo actualizar el producto con ID: " + producto.getId());
             }
         }
     }
@@ -212,7 +212,7 @@ public class ProductoDAO implements GenericDAO<Producto> {
             int rowsAffected = stmt.executeUpdate();
 
             if (rowsAffected == 0) {
-                throw new SQLException("No se encontró persona con ID: " + id);
+                throw new SQLException("No se encontró producto con ID: " + id);
             }
         }
     }
@@ -234,11 +234,11 @@ public class ProductoDAO implements GenericDAO<Producto> {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return mapResultSetToPersona(rs);
+                    return mapResultSetToProducto(rs);
                 }
             }
         } catch (SQLException e) {
-            throw new Exception("Error al obtener persona por ID: " + e.getMessage(), e);
+            throw new Exception("Error al obtener producto por ID: " + e.getMessage(), e);
         }
         return null;
     }
@@ -249,24 +249,24 @@ public class ProductoDAO implements GenericDAO<Producto> {
      *
      * Nota: Usa Statement (no PreparedStatement) porque no hay parámetros.
      *
-     * @return Lista de personas activas con sus domicilios (puede estar vacía)
+     * @return Lista de productos activas con sus domicilios (puede estar vacía)
      * @throws Exception Si hay error de BD
      */
     @Override
     public List<Producto> getAll() throws Exception {
-        List<Producto> personas = new ArrayList<>();
+        List<Producto> productos = new ArrayList<>();
 
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(SELECT_ALL_SQL)) {
 
             while (rs.next()) {
-                personas.add(mapResultSetToPersona(rs));
+                productos.add(mapResultSetToProducto(rs));
             }
         } catch (SQLException e) {
-            throw new Exception("Error al obtener todas las personas: " + e.getMessage(), e);
+            throw new Exception("Error al obtener todos los productos: " + e.getMessage(), e);
         }
-        return personas;
+        return productos;
     }
 
     /**
@@ -280,16 +280,16 @@ public class ProductoDAO implements GenericDAO<Producto> {
      * - filtro = "garcia" → Encuentra personas con nombre o apellido que contengan "garcia"
      *
      * @param filtro Texto a buscar (no puede estar vacío)
-     * @return Lista de personas que coinciden con el filtro (puede estar vacía)
+     * @return Lista de productos que coinciden con el filtro (puede estar vacía)
      * @throws IllegalArgumentException Si el filtro está vacío
      * @throws SQLException Si hay error de BD
      */
-    public List<Producto> buscarPorNombreApellido(String filtro) throws SQLException {
+    public List<Producto> buscarPorNombreMarca(String filtro) throws SQLException {
         if (filtro == null || filtro.trim().isEmpty()) {
             throw new IllegalArgumentException("El filtro de búsqueda no puede estar vacío");
         }
 
-        List<Producto> personas = new ArrayList<>();
+        List<Producto> productos = new ArrayList<>();
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(SEARCH_BY_NAME_SQL)) {
@@ -301,11 +301,11 @@ public class ProductoDAO implements GenericDAO<Producto> {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    personas.add(mapResultSetToPersona(rs));
+                    productos.add(mapResultSetToProducto(rs));
                 }
             }
         }
-        return personas;
+        return productos;
     }
 
     /**
@@ -333,7 +333,7 @@ public class ProductoDAO implements GenericDAO<Producto> {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return mapResultSetToPersona(rs);
+                    return mapResultSetToProducto(rs);
                 }
             }
         }
@@ -351,14 +351,14 @@ public class ProductoDAO implements GenericDAO<Producto> {
      * 4. domicilio_id (Integer o NULL)
      *
      * @param stmt PreparedStatement con INSERT_SQL
-     * @param persona Producto con los datos a insertar
+     * @param producto Producto con los datos a insertar
      * @throws SQLException Si hay error al setear parámetros
      */
-    private void setPersonaParameters(PreparedStatement stmt, Producto persona) throws SQLException {
-        stmt.setString(1, persona.getNombre());
-        stmt.setString(2, persona.getMarca());
-        stmt.setString(3, persona.getCategoria());
-        setDomicilioId(stmt, 4, persona.getCodBarras());
+    private void setProductoParameters(PreparedStatement stmt, Producto producto) throws SQLException {
+        stmt.setString(1, producto.getNombre());
+        stmt.setString(2, producto.getMarca());
+        stmt.setString(3, producto.getCategoria());
+        setCodigoBarrasId(stmt, 4, producto.getCodBarras());
     }
 
     /**
@@ -373,12 +373,12 @@ public class ProductoDAO implements GenericDAO<Producto> {
      *
      * @param stmt PreparedStatement
      * @param parameterIndex Índice del parámetro (1-based)
-     * @param domicilio CodigoBarras asociado (puede ser null)
+     * @param codigoBarras CodigoBarras asociado (puede ser null)
      * @throws SQLException Si hay error al setear el parámetro
      */
-    private void setDomicilioId(PreparedStatement stmt, int parameterIndex, CodigoBarras domicilio) throws SQLException {
-        if (domicilio != null && domicilio.getId() > 0) {
-            stmt.setInt(parameterIndex, domicilio.getId());
+    private void setCodigoBarrasId(PreparedStatement stmt, int parameterIndex, CodigoBarras codigoBarras) throws SQLException {
+        if (codigoBarras != null && codigoBarras.getId() > 0) {
+            stmt.setInt(parameterIndex, codigoBarras.getId());
         } else {
             stmt.setNull(parameterIndex, Types.INTEGER);
         }
@@ -431,7 +431,7 @@ public class ProductoDAO implements GenericDAO<Producto> {
      * @return Producto reconstruida con su domicilio (si tiene)
      * @throws SQLException Si hay error al leer columnas del ResultSet
      */
-    private Producto mapResultSetToPersona(ResultSet rs) throws SQLException {
+    private Producto mapResultSetToProducto(ResultSet rs) throws SQLException {
         Producto persona = new Producto();
         persona.setId(rs.getInt("id"));
         persona.setNombre(rs.getString("nombre"));

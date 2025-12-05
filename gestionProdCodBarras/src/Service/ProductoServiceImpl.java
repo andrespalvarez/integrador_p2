@@ -190,7 +190,7 @@ public class ProductoServiceImpl implements GenericService<Producto> {
         if (filtro == null || filtro.trim().isEmpty()) {
             throw new IllegalArgumentException("El filtro de búsqueda no puede estar vacío");
         }
-        return productoDAO.buscarPorNombreApellido(filtro);
+        return productoDAO.buscarPorNombreMarca(filtro);
     }
 
     /**

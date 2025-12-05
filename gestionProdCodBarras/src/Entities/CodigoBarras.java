@@ -17,7 +17,7 @@ import java.util.Objects;
  * eliminado bool,
  * tipo enum ('EAN13','EAN8','UPC') NOT NULL,
  * valor varchar(20) NOT NULL UNIQUE,
- * fechaImplantacion date,
+ * fechaAsignacion date,
  * observaciones varchar(255) 
  */
 public class CodigoBarras extends Base {
