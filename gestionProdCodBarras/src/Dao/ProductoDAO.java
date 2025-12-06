@@ -74,10 +74,10 @@ public class ProductoDAO implements GenericDAO<Producto> {
      * Usa % antes y después del filtro: LIKE '%filtro%'
      * Solo personas activas (eliminado=FALSE).
      */
-    private static final String SEARCH_BY_NAME_SQL = "SELECT p.id, p.nombre, p.apellido, p.dni, p.domicilio_id, " +
-            "d.id AS dom_id, d.calle, d.numero " +
-            "FROM personas p LEFT JOIN domicilios d ON p.domicilio_id = d.id " +
-            "WHERE p.eliminado = FALSE AND (p.nombre LIKE ? OR p.apellido LIKE ?)";
+    private static final String SEARCH_BY_NAME_SQL = "SELECT p.id, p.nombre, p.marca, p.categoria, p.codigobarras, " +
+            "cb.id AS id, cb.tipo, cb.valor " +
+            "FROM producto p LEFT JOIN codigobarras cb ON p.codigobarras = cb.id " +
+            "WHERE p.eliminado = FALSE AND (p.nombre LIKE ? OR p.marca LIKE ?)";
 
     /**
      * Query de búsqueda exacta por DNI.
@@ -85,10 +85,10 @@ public class ProductoDAO implements GenericDAO<Producto> {
      * Usado por PersonaServiceImpl.validateDniUnique() para verificar unicidad.
      * Solo personas activas (eliminado=FALSE).
      */
-    private static final String SEARCH_BY_DNI_SQL = "SELECT p.id, p.nombre, p.apellido, p.dni, p.domicilio_id, " +
-            "d.id AS dom_id, d.calle, d.numero " +
-            "FROM personas p LEFT JOIN domicilios d ON p.domicilio_id = d.id " +
-            "WHERE p.eliminado = FALSE AND p.dni = ?";
+    private static final String SEARCH_BY_DNI_SQL = "SELECT p.id, p.nombre, p.marca, p.categoria, p.codigobarras, " +
+            "cb.id AS id, cb.tipo, cb.valor " +
+            "FROM producto p LEFT JOIN codigobarras cb ON p.codigobarras = cb.id " +
+            "WHERE p.eliminado = FALSE"; // AND p.dni = ?"; CHEQUEAR
 
     /**
      * DAO de domicilios (actualmente no usado, pero disponible para operaciones futuras).
@@ -200,8 +200,8 @@ public class ProductoDAO implements GenericDAO<Producto> {
      * IMPORTANTE: NO elimina el domicilio asociado (correcto según RN-037).
      * Múltiples personas pueden compartir un domicilio.
      *
-     * @param id ID de la persona a eliminar
-     * @throws SQLException Si la persona no existe o hay error de BD
+     * @param id ID de la producto a eliminar
+     * @throws SQLException Si la producto no existe o hay error de BD
      */
     @Override
     public void eliminar(int id) throws Exception {
@@ -221,8 +221,8 @@ public class ProductoDAO implements GenericDAO<Producto> {
      * Obtiene una persona por su ID.
      * Incluye su domicilio asociado mediante LEFT JOIN.
      *
-     * @param id ID de la persona a buscar
-     * @return Producto encontrada con su domicilio, o null si no existe o está eliminada
+     * @param id ID de la producto a buscar
+     * @return Producto encontrada con su codigoBarras, o null si no existe o está eliminada
      * @throws Exception Si hay error de BD (captura SQLException y re-lanza con mensaje descriptivo)
      */
     @Override
@@ -394,15 +394,15 @@ public class ProductoDAO implements GenericDAO<Producto> {
      * - Necesario para operaciones transaccionales que requieren el ID generado
      *
      * @param stmt PreparedStatement que ejecutó el INSERT con RETURN_GENERATED_KEYS
-     * @param persona Objeto persona a actualizar con el ID generado
+     * @param persona Objeto producto a actualizar con el ID generado
      * @throws SQLException Si no se pudo obtener el ID generado (indica problema grave)
      */
-    private void setGeneratedId(PreparedStatement stmt, Producto persona) throws SQLException {
+    private void setGeneratedId(PreparedStatement stmt, Producto producto) throws SQLException {
         try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
             if (generatedKeys.next()) {
-                persona.setId(generatedKeys.getInt(1));
+                producto.setId(generatedKeys.getInt(1));
             } else {
-                throw new SQLException("La inserción de la persona falló, no se obtuvo ID generado");
+                throw new SQLException("La inserción del producto falló, no se obtuvo ID generado");
             }
         }
     }
@@ -427,27 +427,27 @@ public class ProductoDAO implements GenericDAO<Producto> {
      * - Si domicilio_id es NULL → persona.domicilio = null (correcto)
      * - Si domicilio_id > 0 → Se crea objeto Domicilio y se asigna a persona
      *
-     * @param rs ResultSet posicionado en una fila con datos de persona y domicilio
-     * @return Producto reconstruida con su domicilio (si tiene)
+     * @param rs ResultSet posicionado en una fila con datos de producto y codigoBarras
+     * @return Producto reconstruida con su codigoBarras (si tiene)
      * @throws SQLException Si hay error al leer columnas del ResultSet
      */
     private Producto mapResultSetToProducto(ResultSet rs) throws SQLException {
-        Producto persona = new Producto();
-        persona.setId(rs.getInt("id"));
-        persona.setNombre(rs.getString("nombre"));
-        persona.setMarca(rs.getString("apellido"));
-        persona.setCategoria(rs.getString("dni"));
+        Producto producto = new Producto();
+        producto.setId(rs.getInt("id"));
+        producto.setNombre(rs.getString("nombre"));
+        producto.setMarca(rs.getString("marca"));
+        producto.setCategoria(rs.getString("categoria"));
 
         // Manejo correcto de LEFT JOIN: verificar si domicilio_id es NULL
-        int domicilioId = rs.getInt("domicilio_id");
-        if (domicilioId > 0 && !rs.wasNull()) {
-            CodigoBarras domicilio = new CodigoBarras();
-            domicilio.setId(rs.getInt("dom_id"));
-            domicilio.setTipo(rs.getString("calle"));
-            domicilio.setValor(rs.getString("numero"));
-            persona.setCodBarras(domicilio);
+        int codigoBarrasId = rs.getInt("id");
+        if (codigoBarrasId > 0 && !rs.wasNull()) {
+            CodigoBarras codigoBarras = new CodigoBarras();
+            codigoBarras.setId(rs.getInt("id"));
+            codigoBarras.setTipo(rs.getString("tipo"));
+            codigoBarras.setValor(rs.getString("valor"));
+            producto.setCodBarras(codigoBarras);
         }
 
-        return persona;
+        return producto;
     }
 }

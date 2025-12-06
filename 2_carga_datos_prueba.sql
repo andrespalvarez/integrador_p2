@@ -1,6 +1,6 @@
 use dbProdCodBarras;
 
-INSERT INTO CodigoBarras (id,eliminado,tipo,valor,fechaImplantacion,observaciones) VALUES
+INSERT INTO CodigoBarras (id,eliminado,tipo,valor,fechaAsignacion,observaciones) VALUES
 ('1', '0', 'EAN8', 'CB000001', '2020-04-05', 'mesa básica rectangular hierro blanco fabricado por Muebleria Argentina'),
 ('2', '0', 'EAN8', 'CB000002', '2020-02-22', 'mesa básica rectangular hierro blanco fabricado por Muebleria Argentina'),
 ('3', '0', 'EAN13', 'CB000003', '2025-12-07', 'mesa básica rectangular hierro blanco fabricado por Muebleria Argentina'),

@@ -1,3 +1,4 @@
+drop schema dbProdCodBarras;
 CREATE SCHEMA if not exists dbProdCodBarras ;
 use dbProdCodBarras;
 -- --------------------------------------------------------
@@ -9,7 +10,7 @@ create table if not exists CodigoBarras (
  eliminado bool,
  tipo enum ('EAN13','EAN8','UPC') NOT NULL,
  valor varchar(20) NOT NULL UNIQUE,
- fechaImplantacion date,
+ fechaAsignacion date,
  observaciones varchar(255) 
  );
 -- crea tabla Producto

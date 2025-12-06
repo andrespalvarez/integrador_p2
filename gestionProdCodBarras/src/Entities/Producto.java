@@ -59,7 +59,7 @@ public class Producto extends Base {
         return marca;
     }
 
-    public void setMarca(String apellido) {
+    public void setMarca(String marca) {
         this.marca = marca;
     }
 
@@ -67,7 +67,7 @@ public class Producto extends Base {
         return categoria;
     }
 
-    public void setCategoria(String dni) {
+    public void setCategoria(String categoria) {
         this.categoria = categoria;
     }
 
