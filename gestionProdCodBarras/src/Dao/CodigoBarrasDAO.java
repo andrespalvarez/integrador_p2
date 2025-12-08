@@ -311,7 +311,7 @@ public class CodigoBarrasDAO implements GenericDAO<CodigoBarras> {
             rs.getInt("id"),
             rs.getString("tipo"),
             rs.getString("valor"),    
-            rs.getDate("fechaAsignacion").toLocalDate(),
+            rs.getString("fechaAsignacion"),
             rs.getString("observaciones")
         );
     }

@@ -86,9 +86,9 @@ public class MenuHandler {
             System.out.print("Categoria: ");
             String categoria = scanner.nextLine().trim();
             System.out.print("Precio: ");
-            double precio = Double.parseDouble(scanner.nextLine()); // parseado
+            String precio = scanner.nextLine().trim();
             System.out.print("Peso: ");
-            double peso = Double.parseDouble(scanner.nextLine()); // parseado
+            String peso = scanner.nextLine().trim();
 
             CodigoBarras codigoBarras = null;
             System.out.print("¿Desea agregar un codigo de barras? (s/n): ");
@@ -218,14 +218,14 @@ public class MenuHandler {
             }
             
             System.out.print("Nuevo precio (actual: " + p.getPrecio() + ", Enter para mantener): ");
-            double precio = scanner.nextDouble();
-            if (precio!=Double.NaN) {
+            String precio = scanner.nextLine().trim();
+            if (!precio.isEmpty()) {
                 p.setPrecio(precio);
             }
             
             System.out.print("Nuevo peso (actual: " + p.getPeso() + ", Enter para mantener): ");
-            double peso = scanner.nextDouble();
-            if (peso!=Double.NaN) {
+            String peso = scanner.nextLine().trim();
+            if (!peso.isEmpty()) {
                 p.setPeso(peso);
             }
 
@@ -308,7 +308,8 @@ public class MenuHandler {
                 return;
             }
             for (CodigoBarras d : codigosBarras) {
-                System.out.println("ID: " + d.getId() + ", " + d.getTipo() + " " + d.getValor());
+                System.out.println("ID: " + d.getId() + ", " + d.getTipo() + " " + d.getValor() + 
+                        " Fecha: "+ d.getfechaAsignacion() + " " + d.getObservaciones());
             }
         } catch (Exception e) {
             System.err.println("Error al listar codigos de barra: " + e.getMessage());
@@ -525,7 +526,7 @@ public class MenuHandler {
         System.out.print("Tipo: ");
         String tipo = scanner.nextLine().trim();
         System.out.print("Fecha Asignación: ");
-        LocalDate fechaAsignacion = LocalDate.parse(scanner.nextLine().trim());
+        String fechaAsignacion = scanner.nextLine().trim();
         System.out.print("Observaciones: ");
         String observaciones = scanner.nextLine().trim();
         

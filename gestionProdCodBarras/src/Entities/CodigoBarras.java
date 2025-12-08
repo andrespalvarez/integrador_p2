@@ -24,10 +24,10 @@ public class CodigoBarras extends Base {
     
     private String valor;              // NOT NULL
     private String tipo;               // EAN8, EAN13, UPC
-    private LocalDate fechaAsignacion;
+    private String fechaAsignacion;
     private String observaciones;
 
-    public CodigoBarras(int id, String valor, String tipo, LocalDate fechaAsignacion, String observaciones) {
+    public CodigoBarras(int id, String valor, String tipo, String fechaAsignacion, String observaciones) {
         super(id, false);
         this.valor = valor;
         this.tipo = tipo;
@@ -43,7 +43,7 @@ public class CodigoBarras extends Base {
         return tipo;
     }
 
-    public void setTipo(String calle) {
+    public void setTipo(String tipo) {
         this.tipo = tipo;
     }
 
@@ -68,11 +68,19 @@ public class CodigoBarras extends Base {
                 '}';
     }
 
-    public LocalDate getfechaAsignacion() {
+    public String getfechaAsignacion() {
         return fechaAsignacion;
     }
 
     public String getObservaciones() {
         return observaciones;
+    }
+
+    public void setFechaAsignacion(String fechaAsignacion) {
+        this.fechaAsignacion = fechaAsignacion;
+    }
+
+    public void setObservaciones(String observaciones) {
+        this.observaciones = observaciones;
     }
 }

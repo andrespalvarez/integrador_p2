@@ -27,14 +27,14 @@ public class Producto extends Base {
     
     private String categoria;
     
-    private double precio; //NOT NULL
+    private String precio; //NOT NULL
     
-    private double peso; 
+    private String peso; 
 
     private CodigoBarras codigoBarras;
 
     
-    public Producto(int id, String nombre, String marca, String categoria, double precio, double peso ) {    
+    public Producto(int id, String nombre, String marca, String categoria, String precio, String peso ) {    
         super(id, false);
         this.nombre = nombre;
         this.marca = marca;
@@ -95,19 +95,19 @@ public class Producto extends Base {
     }
 
 
-    public double getPrecio() {
+    public String getPrecio() {
         return precio;
     }
 
-    public double getPeso() {
+    public String getPeso() {
         return peso;
     }
 
-    public void setPrecio(double precio) {  //verificar NOT NULL en service
+    public void setPrecio(String precio) {  //verificar NOT NULL en service
         this.precio = precio;
     }
 
-    public void setPeso(double peso) {
+    public void setPeso(String peso) {
         this.peso = peso;
     }
 }

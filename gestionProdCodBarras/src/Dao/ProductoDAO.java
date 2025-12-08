@@ -53,7 +53,7 @@ public class ProductoDAO implements GenericDAO<Producto> {
      * - Persona: id, nombre, apellido, dni, domicilio_id
      * - Domicilio (puede ser NULL): dom_id, calle, numero
      */
-    private static final String SELECT_BY_ID_SQL = "SELECT p.id, p.nombre, p.marca, p.categoria, p.codigoBarras, " +
+    private static final String SELECT_BY_ID_SQL = "SELECT p.id, p.nombre, p.marca, p.categoria, p.precio, p.peso, p.codigoBarras , " +
             "cb.id AS id, cb.tipo, cb.valor " +
             "FROM producto p LEFT JOIN codigobarras cb ON p.codigobarras = cb.id " +
             "WHERE p.id = ? AND p.eliminado = FALSE";
@@ -63,8 +63,8 @@ public class ProductoDAO implements GenericDAO<Producto> {
      * LEFT JOIN con domicilios para cargar relaciones.
      * Filtra por eliminado=FALSE (solo personas activas).
      */
-    private static final String SELECT_ALL_SQL = "SELECT p.id, p.nombre, p.marca, p.categoria, p.codigoBarras, " +
-            "cb.id AS id, cb.tipo, cb.valor " +
+    private static final String SELECT_ALL_SQL = "SELECT p.id, p.nombre, p.marca, p.categoria, p.precio, p.peso, p.codigoBarras , " +
+            "cb.id AS id, cb.tipo, cb.valor , cb.fechaAsignacion, cb.observaciones  " +
             "FROM producto p LEFT JOIN codigobarras cb ON p.codigobarras = cb.id " +
             "WHERE p.eliminado = FALSE";
 
@@ -74,7 +74,7 @@ public class ProductoDAO implements GenericDAO<Producto> {
      * Usa % antes y después del filtro: LIKE '%filtro%'
      * Solo personas activas (eliminado=FALSE).
      */
-    private static final String SEARCH_BY_NAME_SQL = "SELECT p.id, p.nombre, p.marca, p.categoria, p.codigobarras, " +
+    private static final String SEARCH_BY_NAME_SQL = "SELECT p.id, p.nombre, p.marca, p.categoria, p.precio, p.peso, p.codigoBarras , " +
             "cb.id AS id, cb.tipo, cb.valor " +
             "FROM producto p LEFT JOIN codigobarras cb ON p.codigobarras = cb.id " +
             "WHERE p.eliminado = FALSE AND (p.nombre LIKE ? OR p.marca LIKE ?)";
@@ -85,7 +85,7 @@ public class ProductoDAO implements GenericDAO<Producto> {
      * Usado por PersonaServiceImpl.validateDniUnique() para verificar unicidad.
      * Solo personas activas (eliminado=FALSE).
      */
-    private static final String SEARCH_BY_DNI_SQL = "SELECT p.id, p.nombre, p.marca, p.categoria, p.codigobarras, " +
+    private static final String SEARCH_BY_DNI_SQL = "SELECT p.id, p.nombre, p.marca, p.categoria, p.precio, p.peso, p.codigoBarras , " +
             "cb.id AS id, cb.tipo, cb.valor " +
             "FROM producto p LEFT JOIN codigobarras cb ON p.codigobarras = cb.id " +
             "WHERE p.eliminado = FALSE"; // AND p.dni = ?"; CHEQUEAR
@@ -408,28 +408,7 @@ public class ProductoDAO implements GenericDAO<Producto> {
     }
 
     /**
-     * Mapea un ResultSet a un objeto Persona.
-     * Reconstruye la relación con Domicilio usando LEFT JOIN.
-     *
-     * Mapeo de columnas:
-     * Persona:
-     * - id → p.id
-     * - nombre → p.nombre
-     * - apellido → p.apellido
-     * - dni → p.dni
-     *
-     * Domicilio (puede ser NULL si la persona no tiene domicilio):
-     * - id → d.id AS dom_id
-     * - calle → d.calle
-     * - numero → d.numero
-     *
-     * Lógica de NULL en LEFT JOIN:
-     * - Si domicilio_id es NULL → persona.domicilio = null (correcto)
-     * - Si domicilio_id > 0 → Se crea objeto Domicilio y se asigna a persona
-     *
-     * @param rs ResultSet posicionado en una fila con datos de producto y codigoBarras
-     * @return Producto reconstruida con su codigoBarras (si tiene)
-     * @throws SQLException Si hay error al leer columnas del ResultSet
+     * Mapea un ResultSet a un objeto Producto
      */
     private Producto mapResultSetToProducto(ResultSet rs) throws SQLException {
         Producto producto = new Producto();
@@ -437,14 +416,19 @@ public class ProductoDAO implements GenericDAO<Producto> {
         producto.setNombre(rs.getString("nombre"));
         producto.setMarca(rs.getString("marca"));
         producto.setCategoria(rs.getString("categoria"));
+        producto.setPrecio(rs.getString("precio"));
+        producto.setPeso(rs.getString("peso"));
 
-        // Manejo correcto de LEFT JOIN: verificar si domicilio_id es NULL
+        // Manejo correcto de LEFT JOIN: verificar si codigoBarras es NULL
         int codigoBarrasId = rs.getInt("id");
         if (codigoBarrasId > 0 && !rs.wasNull()) {
             CodigoBarras codigoBarras = new CodigoBarras();
             codigoBarras.setId(rs.getInt("id"));
             codigoBarras.setTipo(rs.getString("tipo"));
             codigoBarras.setValor(rs.getString("valor"));
+            codigoBarras.setFechaAsignacion(rs.getString("fechaAsignacion"));
+            codigoBarras.setObservaciones(rs.getString("observaciones"));
+            
             producto.setCodBarras(codigoBarras);
         }
 
