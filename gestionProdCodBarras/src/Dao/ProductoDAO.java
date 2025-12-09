@@ -13,7 +13,7 @@ import Entities.CodigoBarras;
  * Gestiona todas las operaciones de persistencia de personas en la base de datos.
  *
  * Características:
- * - Implementa GenericDAO<Persona> para operaciones CRUD estándar
+ * - Implementa GenericDAO <Persona> para operaciones CRUD estándar
  * - Usa PreparedStatements en TODAS las consultas (protección contra SQL injection)
  * - Maneja LEFT JOIN con domicilios para cargar la relación de forma eager
  * - Implementa soft delete (eliminado=TRUE, no DELETE físico)
@@ -54,7 +54,7 @@ public class ProductoDAO implements GenericDAO<Producto> {
      * - Domicilio (puede ser NULL): dom_id, calle, numero
      */
     private static final String SELECT_BY_ID_SQL = "SELECT p.id, p.nombre, p.marca, p.categoria, p.precio, p.peso, p.codigoBarras , " +
-            "cb.id AS id, cb.tipo, cb.valor " +
+            "cb.id AS id, cb.tipo, cb.valor, cb.fechaAsignacion, cb.observaciones  " +
             "FROM producto p LEFT JOIN codigobarras cb ON p.codigobarras = cb.id " +
             "WHERE p.id = ? AND p.eliminado = FALSE";
 
@@ -75,7 +75,7 @@ public class ProductoDAO implements GenericDAO<Producto> {
      * Solo personas activas (eliminado=FALSE).
      */
     private static final String SEARCH_BY_NAME_SQL = "SELECT p.id, p.nombre, p.marca, p.categoria, p.precio, p.peso, p.codigoBarras , " +
-            "cb.id AS id, cb.tipo, cb.valor " +
+            "cb.id AS id, cb.tipo, cb.valor , cb.fechaAsignacion, cb.observaciones " +
             "FROM producto p LEFT JOIN codigobarras cb ON p.codigobarras = cb.id " +
             "WHERE p.eliminado = FALSE AND (p.nombre LIKE ? OR p.marca LIKE ?)";
 
@@ -88,7 +88,7 @@ public class ProductoDAO implements GenericDAO<Producto> {
     private static final String SEARCH_BY_DNI_SQL = "SELECT p.id, p.nombre, p.marca, p.categoria, p.precio, p.peso, p.codigoBarras , " +
             "cb.id AS id, cb.tipo, cb.valor " +
             "FROM producto p LEFT JOIN codigobarras cb ON p.codigobarras = cb.id " +
-            "WHERE p.eliminado = FALSE"; // AND p.dni = ?"; CHEQUEAR
+            "WHERE p.eliminado = FALSE"; // AND p.dni = ?"; CHEQUEAR */
 
     /**
      * DAO de domicilios (actualmente no usado, pero disponible para operaciones futuras).
@@ -177,11 +177,14 @@ public class ProductoDAO implements GenericDAO<Producto> {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(UPDATE_SQL)) {
 
-            stmt.setString(1, producto.getNombre());
-            stmt.setString(2, producto.getMarca());
-            stmt.setString(3, producto.getCategoria());
-            setCodigoBarrasId(stmt, 4, producto.getCodBarras());
-            stmt.setInt(5, producto.getId());
+           stmt.setString(1, producto.getNombre());          // nombre
+           stmt.setString(2, producto.getMarca());           // marca
+           stmt.setString(3, producto.getCategoria());       // categoria
+           stmt.setString(4, producto.getPrecio());          // precio
+           stmt.setString(5, producto.getPeso());            // peso
+setCodigoBarrasId(stmt, 6, producto.getCodBarras()); // codigoBarras
+           stmt.setInt(7, producto.getId());                 // WHERE id
+
 
             int rowsAffected = stmt.executeUpdate();
             if (rowsAffected == 0) {
@@ -358,7 +361,10 @@ public class ProductoDAO implements GenericDAO<Producto> {
         stmt.setString(1, producto.getNombre());
         stmt.setString(2, producto.getMarca());
         stmt.setString(3, producto.getCategoria());
-        setCodigoBarrasId(stmt, 4, producto.getCodBarras());
+        stmt.setString(4, producto.getPrecio());
+        stmt.setString(5, producto.getPeso());
+
+        setCodigoBarrasId(stmt, 6, producto.getCodBarras());
     }
 
     /**
