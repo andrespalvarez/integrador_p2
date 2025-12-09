@@ -7,7 +7,7 @@ use dbProdCodBarras;
 -- crea tabla CodigoBarras (primero esta por la relacion q tiene con la otra tabla)
 create table if not exists CodigoBarras (
  id INT AUTO_INCREMENT PRIMARY KEY,
- eliminado bool,
+ eliminado bool default false,
  tipo enum ('EAN13','EAN8','UPC') NOT NULL,
  valor varchar(20) NOT NULL UNIQUE,
  fechaAsignacion date,
@@ -16,7 +16,7 @@ create table if not exists CodigoBarras (
 -- crea tabla Producto
 create table if not exists Producto (
  id INT AUTO_INCREMENT PRIMARY KEY,
- eliminado bool,
+ eliminado bool default false,
  nombre varchar(120) NOT NULL,
  marca varchar(80),
  categoria varchar(80),
