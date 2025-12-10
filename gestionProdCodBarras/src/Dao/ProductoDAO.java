@@ -83,17 +83,14 @@ public class ProductoDAO implements GenericDAO<Producto> {
             "FROM producto p LEFT JOIN codigobarras cb ON p.codigobarras = cb.id " +
             "WHERE p.eliminado = FALSE"; // AND p.dni = ?"; CHEQUEAR */
 
-    /**
-     * DAO de domicilios (actualmente no usado, pero disponible para operaciones futuras).
-     * Inyectado en el constructor por si se necesita coordinar operaciones.
-     */
+   
     private final CodigoBarrasDAO codigoBarrasDAO;
 
     /**
-     * Constructor con inyección de DomicilioDAO.
+     * Constructor con inyección de CodigoBarrasDAO.
      * Valida que la dependencia no sea null (fail-fast).
      *
-     * @param domicilioDAO DAO de domicilios
+     * @param CodigoBarraDAO DAO de codigobarra
      * @throws IllegalArgumentException si codigoBarrasDAO es null
      */
     public ProductoDAO(CodigoBarrasDAO codigoBarrasDAO) {
@@ -104,15 +101,15 @@ public class ProductoDAO implements GenericDAO<Producto> {
     }
 
     /**
-     * Inserta una persona en la base de datos (versión sin transacción).
+     * Inserta un producto en la base de datos (versión sin transacción).
      * Crea su propia conexión y la cierra automáticamente.
      *
      * Flujo:
      * 1. Abre conexión con DatabaseConnection.getConnection()
      * 2. Crea PreparedStatement con INSERT_SQL y RETURN_GENERATED_KEYS
-     * 3. Setea parámetros (nombre, apellido, dni, domicilio_id)
+     * 3. Setea parámetros
      * 4. Ejecuta INSERT
-     * 5. Obtiene el ID autogenerado y lo asigna a persona.id
+     * 5. Obtiene el ID autogenerado y lo asigna a producto.id
      * 6. Cierra recursos automáticamente (try-with-resources)
      *
      * @param producto Producto a insertar (id será ignorado y regenerado)
@@ -130,14 +127,7 @@ public class ProductoDAO implements GenericDAO<Producto> {
     }
 
     /**
-     * Inserta una persona dentro de una transacción existente.
-     * NO crea nueva conexión, recibe una Connection externa.
-     * NO cierra la conexión (responsabilidad del caller con TransactionManager).
-     *
-     * Usado por: (Actualmente no usado, pero disponible para transacciones futuras)
-     * - Operaciones que requieren múltiples inserts coordinados
-     * - Rollback automático si alguna operación falla
-     *
+     
      * @param producto Producto a insertar
      * @param conn Conexión transaccional (NO se cierra en este método)
      * @throws Exception Si falla la inserción
@@ -152,18 +142,14 @@ public class ProductoDAO implements GenericDAO<Producto> {
     }
 
     /**
-     * Actualiza una persona existente en la base de datos.
-     * Actualiza nombre, apellido, dni y FK domicilio_id.
+     * Actualiza un producto existente en la base de datos.
+     * Actualiza sus parametros
      *
      * Validaciones:
-     * - Si rowsAffected == 0 → La persona no existe o ya está eliminada
-     *
-     * IMPORTANTE: Este método puede cambiar la FK domicilio_id:
-     * - Si persona.domicilio == null → domicilio_id = NULL (desasociar)
-     * - Si persona.domicilio.id > 0 → domicilio_id = domicilio.id (asociar/cambiar)
-     *
-     * @param producto Producto con los datos actualizados (id debe ser > 0)
-     * @throws SQLException Si la producto no existe o hay error de BD
+     * - Si rowsAffected == 0 → El producto no existe o ya está eliminada
+    
+     * @param Producto con los datos actualizados (id debe ser > 0)
+     * @throws SQLException Si el producto no existe o hay error de BD
      */
     @Override
     public void actualizar(Producto producto) throws Exception {
@@ -187,16 +173,13 @@ setCodigoBarrasId(stmt, 6, producto.getCodBarras()); // codigoBarras
     }
 
     /**
-     * Elimina lógicamente una persona (soft delete).
+     * Elimina lógicamente un Producto (soft delete).
      * Marca eliminado=TRUE sin borrar físicamente la fila.
      *
      * Validaciones:
      * - Si rowsAffected == 0 → La persona no existe o ya está eliminada
-     *
-     * IMPORTANTE: NO elimina el domicilio asociado (correcto según RN-037).
-     * Múltiples personas pueden compartir un domicilio.
-     *
-     * @param id ID de la producto a eliminar
+    
+     * @param id ID del producto a eliminar
      * @throws SQLException Si la producto no existe o hay error de BD
      */
     @Override
@@ -214,8 +197,7 @@ setCodigoBarrasId(stmt, 6, producto.getCodBarras()); // codigoBarras
     }
 
     /**
-     * Obtiene una persona por su ID.
-     * Incluye su domicilio asociado mediante LEFT JOIN.
+     * Obtiene uN Producto por su ID.
      *
      * @param id ID de la producto a buscar
      * @return Producto encontrada con su codigoBarras, o null si no existe o está eliminada
@@ -240,9 +222,7 @@ setCodigoBarrasId(stmt, 6, producto.getCodBarras()); // codigoBarras
     }
 
     /**
-     * Obtiene todas las personas activas (eliminado=FALSE).
-     * Incluye sus domicilios mediante LEFT JOIN.
-     *
+     * Obtiene los productos activas (eliminado=FALSE).
      * Nota: Usa Statement (no PreparedStatement) porque no hay parámetros.
      *
      * @return Lista de productos activas con sus domicilios (puede estar vacía)
@@ -266,15 +246,7 @@ setCodigoBarrasId(stmt, 6, producto.getCodBarras()); // codigoBarras
     }
 
     /**
-     * Busca personas por nombre o apellido con búsqueda flexible (LIKE).
-     * Permite búsqueda parcial: "juan" encuentra "Juan", "María Juana", etc.
-     *
-     * Patrón de búsqueda: LIKE '%filtro%' en nombre O apellido
-     * Búsqueda case-sensitive en MySQL (depende de la collation de la BD).
-     *
-     * Ejemplo:
-     * - filtro = "garcia" → Encuentra personas con nombre o apellido que contengan "garcia"
-     *
+     * Busqueda de productos con validaciones.
      * @param filtro Texto a buscar (no puede estar vacío)
      * @return Lista de productos que coinciden con el filtro (puede estar vacía)
      * @throws IllegalArgumentException Si el filtro está vacío
@@ -337,14 +309,8 @@ setCodigoBarrasId(stmt, 6, producto.getCodBarras()); // codigoBarras
     }
 
     /**
-     * Setea los parámetros de persona en un PreparedStatement.
-     * Método auxiliar usado por insertar() e insertTx().
-     *
-     * Parámetros seteados:
-     * 1. nombre (String)
-     * 2. apellido (String)
-     * 3. dni (String)
-     * 4. domicilio_id (Integer o NULL)
+     * Setea los parámetros de Producto en un PreparedStatement.
+     * Método auxiliar usado por insertar() e insertTx()
      *
      * @param stmt PreparedStatement con INSERT_SQL
      * @param producto Producto con los datos a insertar
@@ -361,15 +327,7 @@ setCodigoBarrasId(stmt, 6, producto.getCodBarras()); // codigoBarras
     }
 
     /**
-     * Setea la FK domicilio_id en un PreparedStatement.
-     * Maneja correctamente el caso NULL (persona sin domicilio).
-     *
-     * Lógica:
-     * - Si domicilio != null Y domicilio.id > 0 → Setea el ID
-     * - Si domicilio == null O domicilio.id <= 0 → Setea NULL
-     *
      * Importante: El tipo Types.INTEGER es necesario para setNull() en JDBC.
-     *
      * @param stmt PreparedStatement
      * @param parameterIndex Índice del parámetro (1-based)
      * @param codigoBarras CodigoBarras asociado (puede ser null)
@@ -385,13 +343,7 @@ setCodigoBarrasId(stmt, 6, producto.getCodBarras()); // codigoBarras
 
     /**
      * Obtiene el ID autogenerado por la BD después de un INSERT.
-     * Asigna el ID generado al objeto persona.
-     *
-     * IMPORTANTE: Este método es crítico para mantener la consistencia:
-     * - Después de insertar, el objeto persona debe tener su ID real de la BD
-     * - Permite usar persona.getId() inmediatamente después de insertar
-     * - Necesario para operaciones transaccionales que requieren el ID generado
-     *
+     * Asigna el ID generado a la entidad Producto.
      * @param stmt PreparedStatement que ejecutó el INSERT con RETURN_GENERATED_KEYS
      * @param persona Objeto producto a actualizar con el ID generado
      * @throws SQLException Si no se pudo obtener el ID generado (indica problema grave)
