@@ -523,9 +523,9 @@ public class MenuHandler {
     private CodigoBarras crearCodBarras() {
         System.out.print("Valor: ");
         String valor = scanner.nextLine().trim();
-        System.out.print("Tipo: ");
+        System.out.print("Tipo (EAN8, EAN13 o UPC): ");
         String tipo = scanner.nextLine().trim();
-        System.out.print("Fecha Asignación: ");
+        System.out.print("Fecha Asignación (aaaa/mm/dd) : ");
         String fechaAsignacion = scanner.nextLine().trim();
         System.out.print("Observaciones: ");
         String observaciones = scanner.nextLine().trim();

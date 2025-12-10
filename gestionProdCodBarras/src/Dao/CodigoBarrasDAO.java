@@ -31,7 +31,7 @@ public class CodigoBarrasDAO implements GenericDAO<CodigoBarras> {
      * El id es AUTO_INCREMENT y se obtiene con RETURN_GENERATED_KEYS.
      * El campo eliminado tiene DEFAULT FALSE en la BD.
      */
-    private static final String INSERT_SQL = "INSERT INTO codigobarras (tipo, valor, fechaImplantacion, observaciones) VALUES (?, ?, ?, ?)";
+    private static final String INSERT_SQL = "INSERT INTO codigobarras (tipo, valor, fechaAsignacion, observaciones) VALUES (?, ?, ?, ?)";
 
     /**
      * Query de actualización de domicilio.
