@@ -11,12 +11,6 @@ import java.time.LocalDate;
  * Controlador de las operaciones del menú (Menu Handler).
  * Gestiona toda la lógica de interacción con el usuario para operaciones CRUD.
  *
- * Responsabilidades:
- * - Capturar entrada del usuario desde consola (Scanner)
- * - Validar entrada básica (conversión de tipos, valores vacíos)
- * - Invocar servicios de negocio (PersonaService, DomicilioService)//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
- * - Mostrar resultados y mensajes de error al usuario
- * - Coordinar operaciones complejas (crear persona con domicilio, etc.)//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
  *
  * Patrón: Controller (MVC) - capa de presentación en arquitectura de 4 capas
  * Arquitectura: Main → Service → DAO → Models
@@ -25,16 +19,10 @@ import java.time.LocalDate;
  * Todas las validaciones de negocio están en la capa Service.
  */
 public class MenuHandler {
-    /**
-     * Scanner compartido para leer entrada del usuario.
-     * Inyectado desde AppMenu para evitar múltiples Scanners de System.in.
-     */
+  
     private final Scanner scanner;
 
-    /**
-     * Servicio de personas para operaciones CRUD.
-     * También proporciona acceso a DomicilioService mediante getDomicilioService().//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-     */
+  
     private final ProductoServiceImpl productoService;
 
     /**
@@ -56,27 +44,8 @@ public class MenuHandler {
         this.productoService = productoService;
     }
 
-    /**
-     * Opción 1: Crear nueva persona (con domicilio opcional).//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-     *
-     * Flujo:
-     * 1. Solicita nombre, apellido y DNI//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-     * 2. Pregunta si desea agregar domicilio//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-     * 3. Si sí, captura calle y número//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-     * 4. Crea objeto Persona y opcionalmente Domicilio//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-     * 5. Invoca personaService.insertar() que://****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-     *    - Valida datos (nombre, apellido, DNI obligatorios)//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-     *    - Valida DNI único (RN-001)//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-     *    - Si hay domicilio, lo inserta primero (obtiene ID)//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-     *    - Inserta persona con FK domicilio_id correcta//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-     *
-     * Input trimming: Aplica .trim() a todas las entradas (patrón consistente).
-     *
-     * Manejo de errores:
-     * - IllegalArgumentException: Validaciones de negocio (muestra mensaje al usuario)
-     * - SQLException: Errores de BD (muestra mensaje al usuario)
-     * - Todos los errores se capturan y muestran, NO se propagan al menú principal
-     */
+    //Crear un nuevo producto, ingresando todos los parametros string y double
+     
     public void crearProducto() {
         try {
             System.out.print("Nombre: ");
@@ -105,26 +74,9 @@ public class MenuHandler {
         }
     }
 
-    /**
-     * Opción 2: Listar personas (todas o filtradas por nombre/apellido).
-     *
-     * Submenú:
-     * 1. Listar todas las personas activas (getAll)
-     * 2. Buscar por nombre o apellido con LIKE (buscarPorNombreApellido)
-     *
-     * Muestra:
-     * - ID, Nombre, Apellido, DNI
-     * - Domicilio (si tiene): Calle Número
-     *
-     * Manejo de casos especiales:
-     * - Si no hay personas: Muestra "No se encontraron personas"
-     * - Si la persona no tiene domicilio: Solo muestra datos de persona
-     *
-     * Búsqueda por nombre/apellido:
-     * - Usa PersonaDAO.buscarPorNombreApellido() que hace LIKE '%filtro%'
-     * - Insensible a mayúsculas en MySQL (depende de collation)
-     * - Busca en nombre O apellido
-     */
+    
+    // Listar productos / buscar por nombre o marca
+    
     public void listarProductos() {
         try {
             System.out.print("¿Desea (1) listar todos o (2) buscar por nombre/marca? Ingrese opcion: ");
@@ -162,32 +114,11 @@ public class MenuHandler {
         }
     }
 
-    /**
-     * Opción 3: Actualizar persona existente.
-     *
-     * Flujo:
-     * 1. Solicita ID de la persona
-     * 2. Obtiene persona actual de la BD
-     * 3. Muestra valores actuales y permite actualizar:
-     *    - Nombre (Enter para mantener actual)
-     *    - Apellido (Enter para mantener actual)
-     *    - DNI (Enter para mantener actual)
-     * 4. Llama a actualizarDomicilioDePersona() para manejar cambios en domicilio
-     * 5. Invoca personaService.actualizar() que valida:
-     *    - Datos obligatorios (nombre, apellido, DNI)
-     *    - DNI único (RN-001), excepto para la misma persona
-     *
-     * Patrón "Enter para mantener":
-     * - Lee input con scanner.nextLine().trim()
-     * - Si isEmpty() → NO actualiza el campo (mantiene valor actual)
-     * - Si tiene valor → Actualiza el campo
-     *
-     * IMPORTANTE: Esta operación NO actualiza el domicilio directamente.
-     * El domicilio se maneja en actualizarDomicilioDePersona() que puede:
-     * - Actualizar domicilio existente (afecta a TODAS las personas que lo comparten)
-     * - Agregar nuevo domicilio si la persona no tenía
-     * - Dejar domicilio sin cambios
-     */
+    
+      //Actualizar producto existente.
+     
+     
+     
     public void actualizarProducto() {
         try {
             System.out.print("ID de la producto a actualizar: ");
@@ -237,23 +168,9 @@ public class MenuHandler {
         }
     }
 
-    /**
-     * Opción 4: Eliminar persona (soft delete).
-     *
-     * Flujo:
-     * 1. Solicita ID de la persona
-     * 2. Invoca personaService.eliminar() que:
-     *    - Marca persona.eliminado = TRUE
-     *    - NO elimina el domicilio asociado (RN-037)
-     *
-     * IMPORTANTE: El domicilio NO se elimina porque:
-     * - Múltiples personas pueden compartir un domicilio
-     * - Si se eliminara, afectaría a otras personas
-     *
-     * Si se quiere eliminar también el domicilio:
-     * - Usar opción 10: "Eliminar domicilio de una persona" (eliminarDomicilioPorPersona)
-     * - Esa opción primero desasocia el domicilio, luego lo elimina (seguro)
-     */
+    // Eliminar producto (soft delete).
+ 
+     
     public void eliminarProducto() {
         try {
             System.out.print("ID del producto a eliminar: ");
@@ -265,20 +182,9 @@ public class MenuHandler {
         }
     }
 
-    /**
-     * Opción 5: Crear domicilio independiente (sin asociar a persona).
-     *
-     * Flujo:
-     * 1. Llama a crearDomicilio() para capturar calle y número
-     * 2. Invoca domicilioService.insertar() que:
-     *    - Valida calle y número obligatorios (RN-023)
-     *    - Inserta en BD y asigna ID autogenerado
-     * 3. Muestra ID generado
-     *
-     * Uso típico:
-     * - Crear domicilio que luego se asignará a varias personas (opción 7)
-     * - Pre-cargar domicilios en la BD
-     */
+
+     // Opción 5: Crear producto 
+     
     public void crearCodBarrasIndependiente() {
         try {
             CodigoBarras codigoBarras = crearCodBarras();
@@ -289,17 +195,9 @@ public class MenuHandler {
         }
     }
 
-    /**
-     * Opción 6: Listar todos los domicilios activos.
-     *
-     * Muestra: ID, Calle Número
-     *
-     * Uso típico:
-     * - Ver domicilios disponibles antes de asignar a persona (opción 7)
-     * - Consultar ID de domicilio para actualizar (opción 9) o eliminar (opción 8)
-     *
-     * Nota: Solo muestra domicilios con eliminado=FALSE (soft delete).
-     */
+    
+     // Listar todos los productos activos.
+     
     public void listarCodBarras() {
         try {
             List<CodigoBarras> codigosBarras = productoService.getCodigoBarrasService().getAll();
@@ -316,29 +214,9 @@ public class MenuHandler {
         }
     }
 
-    /**
-     * Opción 9: Actualizar domicilio por ID.
-     *
-     * Flujo:
-     * 1. Solicita ID del domicilio
-     * 2. Obtiene domicilio actual de la BD
-     * 3. Muestra valores actuales y permite actualizar:
-     *    - Calle (Enter para mantener actual)
-     *    - Número (Enter para mantener actual)
-     * 4. Invoca domicilioService.actualizar()
-     *
-     * ⚠️ IMPORTANTE (RN-040): Si varias personas comparten este domicilio,
-     * la actualización los afectará a TODAS.
-     *
-     * Ejemplo:
-     * - Domicilio ID=1 "Av. Siempreviva 742" está asociado a 3 personas
-     * - Si se actualiza a "Calle Nueva 123", las 3 personas tendrán la nueva dirección
-     *
-     * Esto es CORRECTO para familias que viven juntas.
-     * Si se quiere cambiar la dirección de UNA sola persona:
-     * 1. Crear nuevo domicilio (opción 5)
-     * 2. Asignar a la persona (opción 7)
-     */
+    
+    //: Actualizar producto por ID.
+    
     public void actualizarCodBarrasPorId() {
         try {
             System.out.print("ID del codigo de barras a actualizar: ");
@@ -369,30 +247,8 @@ public class MenuHandler {
         }
     }
 
-    /**
-     * Opción 8: Eliminar domicilio por ID (PELIGROSO - soft delete directo).
-     *
-     * ⚠️ PELIGRO (RN-029): Este método NO verifica si hay personas asociadas.
-     * Si hay personas con FK a este domicilio, quedarán con referencia huérfana.
-     *
-     * Flujo:
-     * 1. Solicita ID del domicilio
-     * 2. Invoca domicilioService.eliminar() directamente
-     * 3. Marca domicilio.eliminado = TRUE
-     *
-     * Problemas potenciales:
-     * - Personas con domicilio_id apuntando a domicilio "eliminado"
-     * - Datos inconsistentes en la BD
-     *
-     * ALTERNATIVA SEGURA: Opción 10 (eliminarDomicilioPorPersona)
-     * - Primero desasocia domicilio de la persona (domicilio_id = NULL)
-     * - Luego elimina el domicilio
-     * - Garantiza consistencia
-     *
-     * Uso válido:
-     * - Cuando se está seguro de que el domicilio NO tiene personas asociadas
-     * - Limpiar domicilios creados por error
-     */
+ //Eliminar domicilio por ID ( soft delete directo).
+     
     public void eliminarCodBarrasPorId() {
         try {
             System.out.print("ID del codigo de barras a eliminar: ");
@@ -404,26 +260,7 @@ public class MenuHandler {
         }
     }
 
-    /**
-     * Opción 7: Actualizar domicilio de una persona específica.
-     *
-     * Flujo:
-     * 1. Solicita ID de la persona
-     * 2. Verifica que la persona exista y tenga domicilio
-     * 3. Muestra valores actuales del domicilio
-     * 4. Permite actualizar calle y número
-     * 5. Invoca domicilioService.actualizar()
-     *
-     * ⚠️ IMPORTANTE (RN-040): Esta operación actualiza el domicilio compartido.
-     * Si otras personas tienen el mismo domicilio, también se les actualizará.
-     *
-     * Diferencia con opción 9 (actualizarDomicilioPorId):
-     * - Esta opción: Busca persona primero, luego actualiza su domicilio
-     * - Opción 9: Actualiza domicilio directamente por ID
-     *
-     * Ambas tienen el mismo efecto (RN-040): afectan a TODAS las personas
-     * que comparten el domicilio.
-     */
+  // Actualizar domicilio de una persona específica.
     public void actualizarCodBarrasPorProducto() {
         try {
             System.out.print("ID del producto cuyo codigo de barras desea actualizar: ");
@@ -460,24 +297,8 @@ public class MenuHandler {
         }
     }
 
-    /**
-     * Opción 10: Eliminar domicilio de una persona (MÉTODO SEGURO - RN-029 solucionado).
-     *
-     * Flujo transaccional SEGURO:
-     * 1. Solicita ID de la persona
-     * 2. Verifica que la persona exista y tenga domicilio
-     * 3. Invoca personaService.eliminarDomicilioDePersona() que:
-     *    a. Desasocia domicilio de persona (persona.domicilio = null)
-     *    b. Actualiza persona en BD (domicilio_id = NULL)
-     *    c. Elimina el domicilio (ahora no hay FKs apuntando a él)
-     *
-     * Ventaja sobre opción 8 (eliminarDomicilioPorId):
-     * - Garantiza consistencia: Primero actualiza FK, luego elimina
-     * - NO deja referencias huérfanas
-     * - Implementa eliminación segura recomendada en RN-029
-     *
-     * Este es el método RECOMENDADO para eliminar domicilios en producción.
-     */
+    // Eliminar codigo de barra por producto
+     
     public void eliminarCodBarrasPorProducto() {
         try {
             System.out.print("ID del producto cuyo codigo de barras desea eliminar: ");
@@ -502,24 +323,10 @@ public class MenuHandler {
         }
     }
 
-    /**
-     * Método auxiliar privado: Crea un objeto Domicilio capturando calle y número.
-     *
-     * Flujo:
-     * 1. Solicita calle (con trim)
-     * 2. Solicita número (con trim)
-     * 3. Crea objeto Domicilio con ID=0 (será asignado por BD al insertar)
-     *
-     * Usado por:
-     * - crearPersona(): Para agregar domicilio al crear persona
-     * - crearDomicilioIndependiente(): Para crear domicilio sin asociar
-     * - actualizarDomicilioDePersona(): Para agregar domicilio a persona sin domicilio
-     *
-     * Nota: NO persiste en BD, solo crea el objeto en memoria.
-     * El caller es responsable de insertar el domicilio.
-     *
-     * @return CodigoBarras nuevo (no persistido, ID=0)
-     */
+    //Método auxiliar privado: Crea un objeto codigo de barras.
+     
+    @return CodigoBarras nuevo (no persistido, ID=0)
+    
     private CodigoBarras crearCodBarras() {
         System.out.print("Valor: ");
         String valor = scanner.nextLine().trim();
@@ -533,25 +340,7 @@ public class MenuHandler {
         return new CodigoBarras(0, valor, tipo, fechaAsignacion, observaciones);
     }
 
-    /**
-     * Método auxiliar privado: Maneja actualización de domicilio dentro de actualizar persona.
-     *
-     * Casos:
-     * 1. Persona TIENE domicilio:
-     *    - Pregunta si desea actualizar
-     *    - Si sí, permite cambiar calle y número (Enter para mantener)
-     *    - Actualiza domicilio en BD (afecta a TODAS las personas que lo comparten)
-     *
-     * 2. Persona NO TIENE domicilio:
-     *    - Pregunta si desea agregar uno
-     *    - Si sí, captura calle y número con crearDomicilio()
-     *    - Inserta domicilio en BD (obtiene ID)
-     *    - Asocia domicilio a la persona
-     *
-     * Usado exclusivamente por actualizarPersona() (opción 3).
-     *
-     * IMPORTANTE: El parámetro Persona se modifica in-place (setDomicilio).
-     * El caller debe invocar personaService.actualizar() después para persistir.
+    /* Método auxiliar privado: Maneja actualización de codigo dentro de actualizar producto.
      *
      * @param p Producto a la que se le actualizará/agregará codigoBarras
      * @throws Exception Si hay error al insertar/actualizar codigoBarras
