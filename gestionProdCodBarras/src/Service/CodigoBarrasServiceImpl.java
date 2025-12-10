@@ -89,11 +89,21 @@ public class CodigoBarrasServiceImpl implements GenericService<CodigoBarras> {
         if (codigoBarras == null) {
             throw new IllegalArgumentException("El Código de Barras no puede ser null");
         }
-        if (codigoBarras.getTipo() == null) {
-            throw new IllegalArgumentException("El tipo de Código de Barras es obligatorio");
+        
+        // Validación del Tipo: Debe ser NO nulo y NO vacío/solo espacios.
+        if (codigoBarras.getTipo() == null || codigoBarras.getTipo().trim().isEmpty()) {
+            throw new IllegalArgumentException("El tipo de Código de Barras es obligatorio y no puede estar vacío.");
         }
+        
+        // Validación de Valores Permitidos para Tipo 
+        String tipoIngresado = codigoBarras.getTipo().toUpperCase();
+        if (!tipoIngresado.equals("EAN8") && !tipoIngresado.equals("EAN13") && !tipoIngresado.equals("UPC")) {
+             throw new IllegalArgumentException("El tipo de Código de Barras debe ser uno de los siguientes: EAN8, EAN13 o UPC.");
+        }
+
+        // Validación del Valor: Debe ser NO nulo y NO vacío/solo espacios.
         if (codigoBarras.getValor() == null || codigoBarras.getValor().trim().isEmpty()) {
-            throw new IllegalArgumentException("El valor del Código de Barras es obligatorio");
+            throw new IllegalArgumentException("El valor del Código de Barras es obligatorio y no puede estar vacío.");
         }
     }
 }
