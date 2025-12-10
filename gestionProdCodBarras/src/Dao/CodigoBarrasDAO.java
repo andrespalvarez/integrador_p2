@@ -147,7 +147,9 @@ public class CodigoBarrasDAO implements GenericDAO<CodigoBarras> {
 
             stmt.setString(1, codigoBarras.getTipo());
             stmt.setString(2, codigoBarras.getValor());
-            stmt.setInt(3, codigoBarras.getId());
+            stmt.setString(3, codigoBarras.getFechaAsignacion());
+            stmt.setString(4, codigoBarras.getObservaciones());
+            stmt.setInt(5, codigoBarras.getId());
 
             int rowsAffected = stmt.executeUpdate();
             if (rowsAffected == 0) {
@@ -263,6 +265,8 @@ public class CodigoBarrasDAO implements GenericDAO<CodigoBarras> {
     private void setCodigoBarrasParameters(PreparedStatement stmt, CodigoBarras codigoBarras) throws SQLException {
         stmt.setString(1, codigoBarras.getTipo());
         stmt.setString(2, codigoBarras.getValor());
+        stmt.setString(3, codigoBarras.getFechaAsignacion());
+        stmt.setString(4, codigoBarras.getObservaciones());
     }
 
     /**
@@ -285,7 +289,7 @@ public class CodigoBarrasDAO implements GenericDAO<CodigoBarras> {
             if (generatedKeys.next()) {
                 codigoBarras.setId(generatedKeys.getInt(1));
             } else {
-                throw new SQLException("La inserción del domicilio falló, no se obtuvo ID generado");
+                throw new SQLException("La inserción del codigo de barras falló, no se obtuvo ID generado");
             }
         }
     }

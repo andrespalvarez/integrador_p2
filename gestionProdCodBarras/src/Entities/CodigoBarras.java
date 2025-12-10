@@ -68,7 +68,7 @@ public class CodigoBarras extends Base {
                 '}';
     }
 
-    public String getfechaAsignacion() {
+    public String getFechaAsignacion() {
         return fechaAsignacion;
     }
 
@@ -83,4 +83,6 @@ public class CodigoBarras extends Base {
     public void setObservaciones(String observaciones) {
         this.observaciones = observaciones;
     }
+
+    
 }

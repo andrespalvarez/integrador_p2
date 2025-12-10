@@ -153,7 +153,7 @@ public class MenuHandler {
                         ", Precio: " + p.getPrecio() + ", Peso: " + p.getPeso());
                 if (p.getCodBarras() != null) {
                     System.out.println("   Tipo: " + p.getCodBarras().getTipo() +
-                            " Valor: " + p.getCodBarras().getValor() + " Fecha: " + p.getCodBarras().getfechaAsignacion() +
+                            " Valor: " + p.getCodBarras().getValor() + " Fecha: " + p.getCodBarras().getFechaAsignacion() +
                             " Observaciones: " + p.getCodBarras().getObservaciones());
                 }
             }
@@ -309,7 +309,7 @@ public class MenuHandler {
             }
             for (CodigoBarras d : codigosBarras) {
                 System.out.println("ID: " + d.getId() + ", " + d.getTipo() + " " + d.getValor() + 
-                        " Fecha: "+ d.getfechaAsignacion() + " " + d.getObservaciones());
+                        " Fecha: "+ d.getFechaAsignacion() + " " + d.getObservaciones());
             }
         } catch (Exception e) {
             System.err.println("Error al listar codigos de barra: " + e.getMessage());
@@ -350,22 +350,22 @@ public class MenuHandler {
                 return;
             }
 
-            System.out.print("Nuevo tipo (actual: " + c.getTipo() + ", Enter para mantener): ");
+            System.out.print("Indicar: EAN8 , EAN13 o UPC (Tipo Actual: "+ c.getTipo() + "): ");
             String tipo = scanner.nextLine().trim();
             if (!tipo.isEmpty()) {
                 c.setTipo(tipo);
             }
 
-            System.out.print("Nuevo valor (actual: " + c.getValor() + ", Enter para mantener): ");
+            System.out.print("Nuevo valor (Valor Actual: " + c.getValor() + "): ");
             String valor = scanner.nextLine().trim();
             if (!valor.isEmpty()) {
                 c.setValor(valor);
             }
 
             productoService.getCodigoBarrasService().actualizar(c);
-            System.out.println("Domicilio actualizado exitosamente.");
+            System.out.println("Codigo de barras actualizado exitosamente.");
         } catch (Exception e) {
-            System.err.println("Error al actualizar domicilio: " + e.getMessage());
+            System.err.println("Error al actualizar codigo de barras: " + e.getMessage());
         }
     }
 
@@ -441,16 +441,16 @@ public class MenuHandler {
             }
 
             CodigoBarras c = p.getCodBarras();
-            System.out.print("Nuevo tipo (" + c.getTipo() + "): ");
+            System.out.print("Indicar: EAN8 , EAN13 o UPC (Tipo Actual: "+ c.getTipo() + "): ");
             String tipo = scanner.nextLine().trim();
             if (!tipo.isEmpty()) {
                 c.setTipo(tipo);
             }
 
-            System.out.print("Nuevo numero (" + c.getValor() + "): ");
-            String numero = scanner.nextLine().trim();
-            if (!numero.isEmpty()) {
-                c.setValor(numero);
+            System.out.print("Nuevo valor (Valor Actual: " + c.getValor() + "): ");
+            String valor = scanner.nextLine().trim();
+            if (!valor.isEmpty()) {
+                c.setValor(valor);
             }
 
             productoService.getCodigoBarrasService().actualizar(c);
@@ -558,28 +558,28 @@ public class MenuHandler {
      */
     private void actualizarCodBarrasDeProducto(Producto p) throws Exception {
         if (p.getCodBarras() != null) {
-            System.out.print("¿Desea actualizar el domicilio? (s/n): ");
+            System.out.print("¿Desea actualizar el codigo de barras? (s/n): ");
             if (scanner.nextLine().equalsIgnoreCase("s")) {
-                System.out.print("Nueva calle (" + p.getCodBarras().getTipo() + "): ");
-                String calle = scanner.nextLine().trim();
-                if (!calle.isEmpty()) {
-                    p.getCodBarras().setTipo(calle);
+                System.out.print("Nuevo tipo (" + p.getCodBarras().getTipo() + "): ");
+                String tipo = scanner.nextLine().trim();
+                if (!tipo.isEmpty()) {
+                    p.getCodBarras().setTipo(tipo);
                 }
 
-                System.out.print("Nuevo numero (" + p.getCodBarras().getValor() + "): ");
-                String numero = scanner.nextLine().trim();
-                if (!numero.isEmpty()) {
-                    p.getCodBarras().setValor(numero);
+                System.out.print("Nuevo valor (" + p.getCodBarras().getValor() + "): ");
+                String valor = scanner.nextLine().trim();
+                if (!valor.isEmpty()) {
+                    p.getCodBarras().setValor(valor);
                 }
 
                 productoService.getCodigoBarrasService().actualizar(p.getCodBarras());
             }
         } else {
-            System.out.print("La persona no tiene domicilio. ¿Desea agregar uno? (s/n): ");
+            System.out.print("El producto no tiene codigo de barras asignado. ¿Desea agregar uno? (s/n): ");
             if (scanner.nextLine().equalsIgnoreCase("s")) {
-                CodigoBarras nuevoDom = crearCodBarras();
-                productoService.getCodigoBarrasService().insertar(nuevoDom);
-                p.setCodBarras(nuevoDom);
+                CodigoBarras nuevoCB = crearCodBarras();
+                productoService.getCodigoBarrasService().insertar(nuevoCB);
+                p.setCodBarras(nuevoCB);
             }
         }
     }

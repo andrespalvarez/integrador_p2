@@ -105,7 +105,7 @@ public class ProductoDAO implements GenericDAO<Producto> {
      */
     public ProductoDAO(CodigoBarrasDAO codigoBarrasDAO) {
         if (codigoBarrasDAO == null) {
-            throw new IllegalArgumentException("DomicilioDAO no puede ser null");
+            throw new IllegalArgumentException("CodigoBarrasDAO no puede ser null");
         }
         this.codigoBarrasDAO = codigoBarrasDAO;
     }
