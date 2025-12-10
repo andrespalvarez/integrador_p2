@@ -9,38 +9,35 @@ import Config.DatabaseConnection;
 import Entities.CodigoBarras;
 
 /**
- * Data Access Object para la entidad Persona.
- * Gestiona todas las operaciones de persistencia de personas en la base de datos.
+ * Data Access Object para la entidad Producto.
+ * Gestiona todas las operaciones de persistencia de Producto en la base de datos.
  *
  * Características:
- * - Implementa GenericDAO <Persona> para operaciones CRUD estándar
+ * - Implementa GenericDAO <Producto> para operaciones CRUD estándar
  * - Usa PreparedStatements en TODAS las consultas (protección contra SQL injection)
- * - Maneja LEFT JOIN con domicilios para cargar la relación de forma eager
+ * - Maneja LEFT JOIN con Codigos de barra para cargar la relación de forma eager
  * - Implementa soft delete (eliminado=TRUE, no DELETE físico)
- * - Proporciona búsquedas especializadas (por DNI exacto, por nombre/apellido con LIKE)
+ * - Proporciona búsquedas especializadas (por nombre con LIKE)
  * - Soporta transacciones mediante insertTx() (recibe Connection externa)
- *
- * Patrón: DAO con try-with-resources para manejo automático de recursos JDBC
+
  */
 public class ProductoDAO implements GenericDAO<Producto> {
     /**
-     * Query de inserción de persona.
-     * Inserta nombre, apellido, dni y FK domicilio_id.
+     * Clase para insertar productos!.
+     * Inserta los atributos de productos.
      * El id es AUTO_INCREMENT y se obtiene con RETURN_GENERATED_KEYS.
      */
     private static final String INSERT_SQL = "INSERT INTO producto (nombre, marca, categoria, precio, peso, codigoBarras) VALUES (?, ?, ?, ?, ?, ? )";
 
     /**
-     * Query de actualización de persona.
-     * Actualiza nombre, apellido, dni y FK domicilio_id por id.
-     * NO actualiza el flag eliminado (solo se modifica en soft delete).
+     * Query de actualización de Productos del inventario.
+     * Actualiza nombre, marca, categoria, precio, peso y codigo de barras.
      */
     private static final String UPDATE_SQL = "UPDATE producto SET nombre = ?, marca = ?, categoria = ?, precio = ?, peso = ?, codigoBarras = ? WHERE id = ?";
 
     /**
-     * Query de soft delete.
+     * Query de soft delete para eliminar productos.
      * Marca eliminado=TRUE sin borrar físicamente la fila.
-     * Preserva integridad referencial y datos históricos.
      */
     private static final String DELETE_SQL = "UPDATE producto SET eliminado = TRUE WHERE id = ?";
 
@@ -49,30 +46,26 @@ public class ProductoDAO implements GenericDAO<Producto> {
      * LEFT JOIN con domicilios para cargar la relación de forma eager.
      * Solo retorna personas activas (eliminado=FALSE).
      *
-     * Campos del ResultSet:
-     * - Persona: id, nombre, apellido, dni, domicilio_id
-     * - Domicilio (puede ser NULL): dom_id, calle, numero
+     
      */
     private static final String SELECT_BY_ID_SQL = "SELECT p.id, p.nombre, p.marca, p.categoria, p.precio, p.peso, p.codigoBarras , " +
             "cb.id AS id, cb.tipo, cb.valor, cb.fechaAsignacion, cb.observaciones  " +
             "FROM producto p LEFT JOIN codigobarras cb ON p.codigobarras = cb.id " +
             "WHERE p.id = ? AND p.eliminado = FALSE";
 
-    /**
-     * Query para obtener todas las personas activas.
-     * LEFT JOIN con domicilios para cargar relaciones.
-     * Filtra por eliminado=FALSE (solo personas activas).
-     */
+    
+     // Query para obtener los productos activos.
+    
+  
     private static final String SELECT_ALL_SQL = "SELECT p.id, p.nombre, p.marca, p.categoria, p.precio, p.peso, p.codigoBarras , " +
             "cb.id AS id, cb.tipo, cb.valor , cb.fechaAsignacion, cb.observaciones  " +
             "FROM producto p LEFT JOIN codigobarras cb ON p.codigobarras = cb.id " +
             "WHERE p.eliminado = FALSE";
 
     /**
-     * Query de búsqueda por nombre o apellido con LIKE.
-     * Permite búsqueda flexible: el usuario ingresa "juan" y encuentra "Juan", "Juana", etc.
+     * Query de búsqueda con LIKE.
      * Usa % antes y después del filtro: LIKE '%filtro%'
-     * Solo personas activas (eliminado=FALSE).
+     * Solo productos activos (eliminado=FALSE).
      */
     private static final String SEARCH_BY_NAME_SQL = "SELECT p.id, p.nombre, p.marca, p.categoria, p.precio, p.peso, p.codigoBarras , " +
             "cb.id AS id, cb.tipo, cb.valor , cb.fechaAsignacion, cb.observaciones " +
