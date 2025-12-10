@@ -5,32 +5,18 @@ import Entities.Producto;
 import java.util.List;
 import Dao.ProductoDAO;
 
-/**
- * Implementación del servicio de negocio para la entidad Persona.
- * Capa intermedia entre la UI y el DAO que aplica validaciones de negocio complejas.
- *
- * Responsabilidades:
- * - Validar datos de persona ANTES de persistir (RN-035: nombre, apellido, DNI obligatorios)
- * - Garantizar unicidad del DNI en el sistema (RN-001)
- * - COORDINAR operaciones entre Persona y Domicilio (transaccionales)
- * - Proporcionar métodos de búsqueda especializados (por DNI, nombre/apellido)
- * - Implementar eliminación SEGURA de domicilios (evita FKs huérfanas)
- *
- * Patrón: Service Layer con inyección de dependencias y coordinación de servicios
- */
+//Capa intermedia entre la UI y el DAO que aplica validaciones de negocio complejas de la entidad producto.
+ 
 public class ProductoServiceImpl implements GenericService<Producto> {
     /**
-     * DAO para acceso a datos de personas.
+     * DAO para acceso a datos de productos.
      * Inyectado en el constructor (Dependency Injection).
      */
     private final ProductoDAO productoDAO;
 
     /**
-     * Servicio de domicilios para coordinar operaciones transaccionales.
-     * IMPORTANTE: PersonaServiceImpl necesita DomicilioService porque:
-     * - Una persona puede crear/actualizar su domicilio al insertarse/actualizarse
-     * - El servicio coordina la secuencia: insertar domicilio → insertar persona
-     * - Implementa eliminación segura: actualizar FK persona → eliminar domicilio
+     * Servicio de productos para coordinar operaciones transaccionales.
+     * IMPORTANTE: ProductoServiceImpl necesita CodigobarrasServiceImple 
      */
     private final CodigoBarrasServiceImpl codigoBarrasServiceImpl;
 
@@ -38,8 +24,8 @@ public class ProductoServiceImpl implements GenericService<Producto> {
      * Constructor con inyección de dependencias.
      * Valida que ambas dependencias no sean null (fail-fast).
      *
-     * @param productoDAO DAO de personas (normalmente ProductoDAO)
-     * @param codigoBarrasServiceImpl Servicio de domicilios para operaciones coordinadas
+     * @param productoDAO DAO de CodigoBarras (normalmente ProductoDAO)
+     * @param codigoBarrasServiceImpl Servicio de codigo de barras para operaciones coordinadas
      * @throws IllegalArgumentException si alguna dependencia es null
      */
     public ProductoServiceImpl(ProductoDAO productoDAO, CodigoBarrasServiceImpl codigoBarrasServiceImpl) {
@@ -54,28 +40,21 @@ public class ProductoServiceImpl implements GenericService<Producto> {
     }
 
     /**
-     * Inserta una nueva persona en la base de datos.
+     * Inserta un nuevo producto en la base de datos.
      *
      * Flujo transaccional complejo:
-     * 1. Valida que los datos de la persona sean correctos (nombre, apellido, DNI)
-     * 2. Valida que el DNI sea único en el sistema (RN-001)
-     * 3. Si la persona tiene domicilio asociado:
-     *    a. Si domicilio.id == 0 → Es nuevo, lo inserta en la BD
-     *    b. Si domicilio.id > 0 → Ya existe, lo actualiza
-     * 4. Inserta la persona con la FK domicilio_id correcta
-     *
-     * IMPORTANTE: La coordinación con DomicilioService permite que el domicilio
-     * obtenga su ID autogenerado ANTES de insertar la persona (necesario para la FK).
-     *
+     * 1. Valida que los datos del producto sean correctos
+     * 2. Valida que el ID sea único en el sistema (RN-001)
+    
+
      * @param producto Producto a insertar (id será ignorado y regenerado)
-     * @throws Exception Si la validación falla, el DNI está duplicado, o hay error de BD
+     * @throws Exception Si la validación falla, el id está duplicado, o hay error de BD
      */
     @Override
     public void insertar(Producto producto) throws Exception {
         validateProducto(producto);
         
 
-        // Coordinación con DomicilioService (transaccional)
         if (producto.getCodBarras() != null) {
             if (producto.getCodBarras().getId() == 0) {
                 // CodigoBarras nuevo: insertar primero para obtener ID autogenerado
@@ -90,17 +69,13 @@ public class ProductoServiceImpl implements GenericService<Producto> {
     }
 
     /**
-     * Actualiza una persona existente en la base de datos.
+     * Actualiza un producto existente en la base de datos.
      *
      * Validaciones:
-     * - La persona debe tener datos válidos (nombre, apellido, DNI)
-     * - El ID debe ser > 0 (debe ser una persona ya persistida)
-     * - El DNI debe ser único (RN-001), excepto para la misma persona
+     * - La producto debe tener datos válidos (los parametros, nombre, marca, etc)
+     * - El ID debe ser > 0 (debe ser una producto ya persistida)
      *
-     * IMPORTANTE: Esta operación NO coordina con DomicilioService.
-     * Para cambiar el domicilio de una persona, usar MenuHandler que:
-     * - Asignar nuevo domicilio: opción 6 (crea nuevo) o 7 (usa existente)
-     * - Actualizar domicilio: opción 9 (modifica domicilio actual)
+     
      *
      * @param persona Producto con los datos actualizados
      * @throws Exception Si la validación falla, el DNI está duplicado, o la persona no existe
@@ -116,15 +91,12 @@ public class ProductoServiceImpl implements GenericService<Producto> {
     }
 
     /**
-     * Elimina lógicamente una persona (soft delete).
-     * Marca la persona como eliminado=TRUE sin borrarla físicamente.
+     * Elimina lógicamente un producto (soft delete).
+     * Marca el producto como eliminado=TRUE sin borrarla físicamente.
      *
-     * ⚠️ IMPORTANTE: Este método NO elimina el domicilio asociado (RN-037).
-     * Si la persona tiene un domicilio, este quedará activo en la BD.
-     * Esto es correcto porque múltiples personas pueden compartir un domicilio.
-     *
-     * @param id ID de la persona a eliminar
-     * @throws Exception Si id <= 0 o no existe la persona
+     
+     * @param id ID del producto a eliminar
+     * @throws Exception Si id <= 0 o no existe el producto
      */
     @Override
     public void eliminar(int id) throws Exception {
@@ -135,11 +107,11 @@ public class ProductoServiceImpl implements GenericService<Producto> {
     }
 
     /**
-     * Obtiene una persona por su ID.
-     * Incluye el domicilio asociado mediante LEFT JOIN (PersonaDAO).
+     * Obtiene un producto por su ID.
+     * Incluye el codigo de barras asociado mediante LEFT JOIN (CodigobarrasDAO).
      *
-     * @param id ID de la persona a buscar
-     * @return Producto encontrada (con su domicilio si tiene), o null si no existe o está eliminada
+     * @param id ID del producto a buscar
+     * @return Producto encontrado (con su codigo si tiene), o null si no existe o está eliminado
      * @throws Exception Si id <= 0 o hay error de BD
      */
     @Override
@@ -151,10 +123,10 @@ public class ProductoServiceImpl implements GenericService<Producto> {
     }
 
     /**
-     * Obtiene todas las personas activas (eliminado=FALSE).
-     * Incluye sus domicilios mediante LEFT JOIN (PersonaDAO).
+     * Obtiene todas las productos activos (eliminado=FALSE).
+     * Incluye sus codigos mediante LEFT JOIN (CodigobarrasDAO).
      *
-     * @return Lista de personas activas con sus domicilios (puede estar vacía)
+     * @return Lista de productos activos con sus codigos (puede estar vacía)
      * @throws Exception Si hay error de BD
      */
     @Override
@@ -162,29 +134,19 @@ public class ProductoServiceImpl implements GenericService<Producto> {
         return productoDAO.getAll();
     }
 
-    /**
-     * Expone el servicio de domicilios para que MenuHandler pueda usarlo.
-     * Necesario para operaciones de menú que trabajan directamente con domicilios.
-     *
-     * @return Instancia de CodigoBarrasServiceImpl inyectada en este servicio
-     */
+   
+     // @return Instancia de CodigoBarrasServiceImpl inyectada en este servicio
+     
     public CodigoBarrasServiceImpl getCodigoBarrasService() {
         return this.codigoBarrasServiceImpl;
     }
 
     /**
-     * Busca personas por nombre o apellido (búsqueda flexible con LIKE).
-     * Usa PersonaDAO.buscarPorNombreApellido() que realiza:
-     * - LIKE %filtro% en nombre O apellido
-     * - Insensible a mayúsculas/minúsculas (LOWER())
-     * - Solo personas activas (eliminado=FALSE)
+     * Busca productos por nombre (búsqueda flexible con LIKE).
      *
-     * Uso típico: El usuario ingresa "juan" y encuentra "Juan Pérez", "María Juana", etc.
+     * Uso típico: El usuario ingresa "mesa" y encuentra "mesa redonda", "Mesa cuadrada", etc.
      *
-     * @param filtro Texto a buscar (no puede estar vacío)
-     * @return Lista de personas que coinciden con el filtro (puede estar vacía)
-     * @throws IllegalArgumentException Si el filtro está vacío
-     * @throws Exception Si hay error de BD
+     
      */
     public List<Producto> buscarPorNombreMarca(String filtro) throws Exception {
         if (filtro == null || filtro.trim().isEmpty()) {
@@ -205,7 +167,7 @@ public class ProductoServiceImpl implements GenericService<Producto> {
      * @return Producto con ese DNI, o null si no existe o está eliminada
      * @throws IllegalArgumentException Si el DNI está vacío
      * @throws Exception Si hay error de BD
-     */
+         
     public Producto buscarPorDni(String dni) throws Exception {
         if (dni == null || dni.trim().isEmpty()) {
             throw new IllegalArgumentException("El DNI no puede estar vacío");
@@ -256,13 +218,13 @@ public class ProductoServiceImpl implements GenericService<Producto> {
     }
 
     /**
-     * Valida que una persona tenga datos correctos.
+     * Valida que un producto tenga datos correctos.
      *
      * Reglas de negocio aplicadas:
      * - RN-035: Nombre, apellido y DNI son obligatorios
      * - RN-036: Se verifica trim() para evitar strings solo con espacios
      *
-     * @param persona Producto a validar
+     * @param  Producto a validar
      * @throws IllegalArgumentException Si alguna validación falla
      */
     private void validateProducto(Producto persona) {
@@ -301,7 +263,7 @@ public class ProductoServiceImpl implements GenericService<Producto> {
      * @param personaId ID de la persona (null para INSERT, != null para UPDATE)
      * @throws IllegalArgumentException Si el DNI ya existe y pertenece a otra persona
      * @throws Exception Si hay error de BD al buscar
-     */
+     */  /*
     private void validateDniUnique(String dni, Integer personaId) throws Exception {
         Producto existente = productoDAO.buscarPorDni(dni);
         if (existente != null) {
@@ -313,4 +275,4 @@ public class ProductoServiceImpl implements GenericService<Producto> {
             // Si llegamos aquí: es UPDATE y el DNI pertenece a la misma persona → OK
         }
     }
-}
+} **/
