@@ -10,16 +10,16 @@ Emiliano Alvarez
 
 Descripcin del sistema: ////////////COMPLETAR////////////
 
-Producto (
- id INT AUTO_INCREMENT PRIMARY KEY,
- eliminado bool,
- nombre varchar(120) NOT NULL,
- marca varchar(80),
- categoria varchar(80),
- precio double(10,2) NOT NULL,
- peso double(10,3) CHECK(peso>0),
- codigoBarras int UNIQUE,
- foreign key (codigoBarras) references CodigoBarras(id) -- necesita que este creada la otra tabla
+Producto (  
+ id INT AUTO_INCREMENT PRIMARY KEY,  
+ eliminado bool,  
+ nombre varchar(120) NOT NULL,  
+ marca varchar(80),  
+ categoria varchar(80),  
+ precio double(10,2) NOT NULL,  
+ peso double(10,3) CHECK(peso>0),  
+ codigoBarras int UNIQUE,  
+ foreign key (codigoBarras) references CodigoBarras(id) -- necesita que este creada la otra tabla  
 );
 
 CodigoBarras (
