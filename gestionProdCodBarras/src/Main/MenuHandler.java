@@ -55,9 +55,9 @@ public class MenuHandler {
             System.out.print("Categoria: ");
             String categoria = scanner.nextLine().trim();
             System.out.print("Precio: ");
-            String precio = scanner.nextLine().trim();
+            double precio = Double.parseDouble(scanner.nextLine().trim()); 
             System.out.print("Peso: ");
-            String peso = scanner.nextLine().trim();
+            double peso = Double.parseDouble(scanner.nextLine().trim()); 
 
             CodigoBarras codigoBarras = null;
             System.out.print("¿Desea agregar un codigo de barras? (s/n): ");
@@ -65,7 +65,7 @@ public class MenuHandler {
                 codigoBarras = crearCodBarras();
             }
 
-            Producto producto = new Producto(0, nombre, marca, categoria, precio, peso);//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+            Producto producto = new Producto(0, nombre, marca, categoria, precio, peso);
             producto.setCodBarras(codigoBarras);
             productoService.insertar(producto);
             System.out.println("Producto creado exitosamente con ID: " + producto.getId());
@@ -149,14 +149,14 @@ public class MenuHandler {
             }
             
             System.out.print("Nuevo precio (actual: " + p.getPrecio() + ", Enter para mantener): ");
-            String precio = scanner.nextLine().trim();
-            if (!precio.isEmpty()) {
+            double precio = Double.parseDouble(scanner.nextLine().trim());
+            if (!Double.isNaN(precio)) {
                 p.setPrecio(precio);
             }
             
             System.out.print("Nuevo peso (actual: " + p.getPeso() + ", Enter para mantener): ");
-            String peso = scanner.nextLine().trim();
-            if (!peso.isEmpty()) {
+            double peso = Double.parseDouble(scanner.nextLine().trim());
+            if (!Double.isNaN(peso)) {
                 p.setPeso(peso);
             }
 
@@ -332,8 +332,8 @@ public class MenuHandler {
         String valor = scanner.nextLine().trim();
         System.out.print("Tipo (EAN8, EAN13 o UPC): ");
         String tipo = scanner.nextLine().trim();
-        System.out.print("Fecha Asignación (aaaa/mm/dd) : ");
-        String fechaAsignacion = scanner.nextLine().trim();
+        System.out.print("Fecha Asignación (aaaa-mm-dd) : ");
+        LocalDate fechaAsignacion = LocalDate.parse(scanner.nextLine().trim());
         System.out.print("Observaciones: ");
         String observaciones = scanner.nextLine().trim();
         

@@ -17,17 +17,17 @@ import java.util.Objects;
  * eliminado bool,
  * tipo enum ('EAN13','EAN8','UPC') NOT NULL,
  * valor varchar(20) NOT NULL UNIQUE,
- * fechaAsignacion date,
+ * fechaAsignacion LocalDate,
  * observaciones varchar(255) 
  */
 public class CodigoBarras extends Base {
     
     private String valor;              // NOT NULL
     private String tipo;               // EAN8, EAN13, UPC
-    private String fechaAsignacion;
+    private LocalDate fechaAsignacion;
     private String observaciones;
 
-    public CodigoBarras(int id, String valor, String tipo, String fechaAsignacion, String observaciones) {
+    public CodigoBarras(int id, String valor, String tipo, LocalDate fechaAsignacion, String observaciones) {
         super(id, false);
         this.valor = valor;
         this.tipo = tipo;
@@ -68,7 +68,7 @@ public class CodigoBarras extends Base {
                 '}';
     }
 
-    public String getFechaAsignacion() {
+    public LocalDate getFechaAsignacion() {
         return fechaAsignacion;
     }
 
@@ -76,7 +76,7 @@ public class CodigoBarras extends Base {
         return observaciones;
     }
 
-    public void setFechaAsignacion(String fechaAsignacion) {
+    public void setFechaAsignacion(LocalDate fechaAsignacion) {
         this.fechaAsignacion = fechaAsignacion;
     }
 

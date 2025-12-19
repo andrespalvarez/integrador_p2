@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import Config.DatabaseConnection;
 import Entities.CodigoBarras;
+import java.time.LocalDate;
 
 // Data Access Object para la entidad Codigo de Barras que depende de Producto..
  
@@ -82,7 +83,7 @@ public class CodigoBarrasDAO implements GenericDAO<CodigoBarras> {
 
             stmt.setString(1, codigoBarras.getTipo());
             stmt.setString(2, codigoBarras.getValor());
-            stmt.setString(3, codigoBarras.getFechaAsignacion());
+            stmt.setDate(3, Date.valueOf(codigoBarras.getFechaAsignacion()));
             stmt.setString(4, codigoBarras.getObservaciones());
             stmt.setInt(5, codigoBarras.getId());
 
@@ -172,7 +173,7 @@ public class CodigoBarrasDAO implements GenericDAO<CodigoBarras> {
     private void setCodigoBarrasParameters(PreparedStatement stmt, CodigoBarras codigoBarras) throws SQLException {
         stmt.setString(1, codigoBarras.getTipo());
         stmt.setString(2, codigoBarras.getValor());
-        stmt.setString(3, codigoBarras.getFechaAsignacion());
+        stmt.setDate(3, Date.valueOf(codigoBarras.getFechaAsignacion()));
         stmt.setString(4, codigoBarras.getObservaciones());
     }
 
@@ -206,7 +207,7 @@ public class CodigoBarrasDAO implements GenericDAO<CodigoBarras> {
             rs.getInt("id"),
             rs.getString("tipo"),
             rs.getString("valor"),    
-            rs.getString("fechaAsignacion"),
+            rs.getObject("fechaAsignacion", LocalDate.class), 
             rs.getString("observaciones")
         );
     }

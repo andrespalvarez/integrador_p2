@@ -21,20 +21,15 @@ package Entities;
  */
 public class Producto extends Base {
     
-    private String nombre; //NOT NULL
-    
-    private String marca;
-    
-    private String categoria;
-    
-    private String precio; //NOT NULL
-    
-    private String peso; 
-
+    private String nombre; //NOT NULL    
+    private String marca;    
+    private String categoria;    
+    private double precio; //NOT NULL    
+    private double peso; 
     private CodigoBarras codigoBarras;
 
     
-    public Producto(int id, String nombre, String marca, String categoria, String precio, String peso ) {    
+    public Producto(int id, String nombre, String marca, String categoria, double precio, double peso ) {    
         super(id, false);
         this.nombre = nombre;
         this.marca = marca;
@@ -95,19 +90,19 @@ public class Producto extends Base {
     }
 
 
-    public String getPrecio() {
+    public double getPrecio() {
         return precio;
     }
 
-    public String getPeso() {
+    public double getPeso() {
         return peso;
     }
 
-    public void setPrecio(String precio) {  //verificar NOT NULL en service
+    public void setPrecio(double precio) {  //verificar NOT NULL en service
         this.precio = precio;
     }
 
-    public void setPeso(String peso) {
+    public void setPeso(double peso) {
         this.peso = peso;
     }
 }
