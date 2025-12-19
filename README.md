@@ -22,13 +22,13 @@ Producto (
  foreign key (codigoBarras) references CodigoBarras(id) -- necesita que este creada la otra tabla  
 );
 
-CodigoBarras (
- id INT AUTO_INCREMENT PRIMARY KEY,
- eliminado bool,
- tipo enum ('EAN13','EAN8','UPC') NOT NULL,
- valor varchar(20) NOT NULL UNIQUE,
- fechaImplantacion date,
- observaciones varchar(255) 
+CodigoBarras (  
+ id INT AUTO_INCREMENT PRIMARY KEY,  
+ eliminado bool,  
+ tipo enum ('EAN13','EAN8','UPC') NOT NULL,  
+ valor varchar(20) NOT NULL UNIQUE,  
+ fechaImplantacion date,  
+ observaciones varchar(255)   
  );
 
 ////////////COMPLETAR////////////
