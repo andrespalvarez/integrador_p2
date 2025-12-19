@@ -325,7 +325,7 @@ public class MenuHandler {
 
     //Método auxiliar privado: Crea un objeto codigo de barras.
      
-    @return CodigoBarras nuevo (no persistido, ID=0)
+//    @return CodigoBarras nuevo (no persistido, ID=0)
     
     private CodigoBarras crearCodBarras() {
         System.out.print("Valor: ");

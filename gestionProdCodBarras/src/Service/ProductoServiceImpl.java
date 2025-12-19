@@ -86,7 +86,7 @@ public class ProductoServiceImpl implements GenericService<Producto> {
         if (persona.getId() <= 0) {
             throw new IllegalArgumentException("El ID de la persona debe ser mayor a 0 para actualizar");
         }
-        validateDniUnique(persona.getCategoria(), persona.getId());
+//        validateDniUnique(persona.getCategoria(), persona.getId());
         productoDAO.actualizar(persona);
     }
 
@@ -241,6 +241,7 @@ public class ProductoServiceImpl implements GenericService<Producto> {
             throw new IllegalArgumentException("El DNI no puede estar vacío");
         }
     }
+}
 
     /**
      * Valida que un DNI sea único en el sistema.
