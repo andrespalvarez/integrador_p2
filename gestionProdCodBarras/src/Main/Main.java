@@ -7,7 +7,7 @@ package Main;
  * - Delegar la ejecución a AppMenu
  *
  * Diferencia con AppMenu.main():
- * - AppMenu.main(): Punto de entrada primario (más usado)
+ * - AppMenu.main(): Punto de entrada primario (más usado)1
  * - Main.main(): Punto de entrada alternativo (mismo comportamiento)
  *
 

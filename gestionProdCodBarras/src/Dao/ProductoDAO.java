@@ -340,6 +340,7 @@ setCodigoBarrasId(stmt, 6, producto.getCodBarras()); // codigoBarras
         } else {
             stmt.setNull(parameterIndex, Types.INTEGER);
         }
+       
     }
 
     /**
