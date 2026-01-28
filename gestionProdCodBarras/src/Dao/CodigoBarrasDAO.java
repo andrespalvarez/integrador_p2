@@ -205,8 +205,8 @@ public class CodigoBarrasDAO implements GenericDAO<CodigoBarras> {
     private CodigoBarras mapResultSetToCodigoBarras(ResultSet rs) throws SQLException {
         return new CodigoBarras(
             rs.getInt("id"),
-            rs.getString("tipo"),
-            rs.getString("valor"),    
+            rs.getString("valor"), 
+            rs.getString("tipo"),               
             rs.getObject("fechaAsignacion", LocalDate.class), 
             rs.getString("observaciones")
         );

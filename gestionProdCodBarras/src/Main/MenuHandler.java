@@ -21,7 +21,6 @@ import java.time.LocalDate;
 public class MenuHandler {
   
     private final Scanner scanner;
-
   
     private final ProductoServiceImpl productoService;
 
