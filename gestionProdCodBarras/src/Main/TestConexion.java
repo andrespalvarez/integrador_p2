@@ -10,16 +10,20 @@ import Config.DatabaseConnection;
 
 public class TestConexion {
     public static void main(String[] args) {
-        /**
-         * 🔹 Se usa un bloque try-with-resources para asegurar que la conexión
-         *     se cierre automáticamente al salir del bloque.
-         * 🔹 No es necesario llamar explícitamente a conn.close().
-         */
+
+
+//Bloque try-with-resources que garantiza el cierre automático de la conexión.
+//No requiere llamar manualmente a conn.close().
+ 
+
+
         try (Connection conn = DatabaseConnection.getConnection()) {
             if (conn != null) {
                 System.out.println("✅ Conexión establecida con éxito.");
                 
-                // 🔹 Crear y ejecutar consulta SQL con PreparedStatement
+// Ejecuta la consulta SQL usando PreparedStatement para evitar inyecciones y reutilizar la sentencia
+
+
                 String sql = "SELECT * FROM producto";
                 try (PreparedStatement pstmt = conn.prepareStatement(sql); 
                         ResultSet rs = pstmt.executeQuery()) {
@@ -35,9 +39,11 @@ public class TestConexion {
                 System.out.println("❌ No se pudo establecer la conexión.");
             }
         } catch (SQLException e) {
-            // 🔹 Manejo de errores en la conexión a la base de datos
+
+// Manejo de errores SQL: muestra mensaje y permite depuración con stacktrace
+
             System.err.println("⚠️ Error al conectar a la base de datos: " + e.getMessage());
-            e.printStackTrace(); // Imprime el stack trace completo para depuración
+e.printStackTrace(); // Stacktrace para diagnosticar errores en tiempo de ejecución
         }
     }
 }

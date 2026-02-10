@@ -4,10 +4,9 @@ import java.util.List;
 import Dao.GenericDAO;
 import Entities.CodigoBarras;
 
-/**
- * Servicio de negocio para CodigoBarras (Clase B).
- * Compatible con ProductoServiceImpl.
- */
+//Servicio de negocio para CodigoBarras (Clase B).
+//Compatible con ProductoServiceImpl.
+ 
 public class CodigoBarrasServiceImpl implements GenericService<CodigoBarras> {
 
     private final GenericDAO<CodigoBarras> codigoBarrasDAO;
@@ -19,18 +18,17 @@ public class CodigoBarrasServiceImpl implements GenericService<CodigoBarras> {
         this.codigoBarrasDAO = codigoBarrasDAO;
     }
 
-    // -----------------------------------------------------
-    // INSERTAR (con validaciones)
-    // -----------------------------------------------------
+  
+// INSERTAR (con validaciones)
+  
     @Override
     public void insertar(CodigoBarras codigoBarras) throws Exception {
         validateCodigoBarras(codigoBarras);
         codigoBarrasDAO.insertar(codigoBarras);  // genera ID autoincrement
     }
 
-    // -----------------------------------------------------
-    // ACTUALIZAR
-    // -----------------------------------------------------
+// ACTUALIZAR
+    
     @Override
     public void actualizar(CodigoBarras codigoBarras) throws Exception {
         validateCodigoBarras(codigoBarras);
@@ -40,9 +38,9 @@ public class CodigoBarrasServiceImpl implements GenericService<CodigoBarras> {
         codigoBarrasDAO.actualizar(codigoBarras);
     }
 
-    // -----------------------------------------------------
-    // ELIMINAR (soft delete)
-    // -----------------------------------------------------
+// ELIMINAR (soft delete)
+
+
     @Override
     public void eliminar(int id) throws Exception {
         if (id <= 0) {
@@ -51,9 +49,9 @@ public class CodigoBarrasServiceImpl implements GenericService<CodigoBarras> {
         codigoBarrasDAO.eliminar(id);
     }
 
-    // -----------------------------------------------------
-    // GET BY ID
-    // -----------------------------------------------------
+// GET BY ID
+
+
     @Override
     public CodigoBarras getById(int id) throws Exception {
         if (id <= 0) {
@@ -62,17 +60,16 @@ public class CodigoBarrasServiceImpl implements GenericService<CodigoBarras> {
         return codigoBarrasDAO.getById(id);
     }
 
-    // -----------------------------------------------------
-    // GET ALL
-    // -----------------------------------------------------
+// GET ALL
+
+
     @Override
     public List<CodigoBarras> getAll() throws Exception {
         return codigoBarrasDAO.getAll();
     }
 
-    // -----------------------------------------------------
-    // BÚSQUEDA ESPECIALIZADA
-    // -----------------------------------------------------
+// BÚSQUEDA ESPECIALIZADA
+
     public CodigoBarras buscarPorValor(String valor) throws Exception {
         if (valor == null || valor.trim().isEmpty()) {
             throw new IllegalArgumentException("El valor no puede estar vacío");
@@ -82,26 +79,33 @@ public class CodigoBarrasServiceImpl implements GenericService<CodigoBarras> {
         return null;
     }
 
-    // -----------------------------------------------------
-    // VALIDACIONES
-    // -----------------------------------------------------
+// VALIDACIONES
+    
+    
+    
     private void validateCodigoBarras(CodigoBarras codigoBarras) {
         if (codigoBarras == null) {
             throw new IllegalArgumentException("El Código de Barras no puede ser null");
         }
         
-        // Validación del Tipo: Debe ser NO nulo y NO vacío/solo espacios.
+// Validación del Tipo: Debe ser NO nulo y NO vacío/solo espacios.
+
+
         if (codigoBarras.getTipo() == null || codigoBarras.getTipo().trim().isEmpty()) {
             throw new IllegalArgumentException("El tipo de Código de Barras es obligatorio y no puede estar vacío.");
         }
         
-        // Validación de Valores Permitidos para Tipo 
+// Validación de Valores Permitidos para Tipo 
+
+
         String tipoIngresado = codigoBarras.getTipo().toUpperCase();
         if (!tipoIngresado.equals("EAN8") && !tipoIngresado.equals("EAN13") && !tipoIngresado.equals("UPC")) {
              throw new IllegalArgumentException("El tipo de Código de Barras debe ser uno de los siguientes: EAN8, EAN13 o UPC.");
         }
 
-        // Validación del Valor: Debe ser NO nulo y NO vacío/solo espacios.
+// Validación del Valor: Debe ser NO nulo y NO vacío/solo espacios.
+        
+        
         if (codigoBarras.getValor() == null || codigoBarras.getValor().trim().isEmpty()) {
             throw new IllegalArgumentException("El valor del Código de Barras es obligatorio y no puede estar vacío.");
         }

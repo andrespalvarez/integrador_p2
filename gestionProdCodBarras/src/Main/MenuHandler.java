@@ -7,31 +7,19 @@ import Entities.CodigoBarras;
 import Service.ProductoServiceImpl;
 import java.time.LocalDate;
 
-/**
- * Controlador de las operaciones del menú (Menu Handler).
- * Gestiona toda la lógica de interacción con el usuario para operaciones CRUD.
- *
- *
- * Patrón: Controller (MVC) - capa de presentación en arquitectura de 4 capas
- * Arquitectura: Main → Service → DAO → Models
- *
- * IMPORTANTE: Este handler NO contiene lógica de negocio.
- * Todas las validaciones de negocio están en la capa Service.
- */
+// Controla las operaciones del menú y coordina acciones con el servicio.
+
+
 public class MenuHandler {
   
     private final Scanner scanner;
+
   
     private final ProductoServiceImpl productoService;
 
-    /**
-     * Constructor con inyección de dependencias.
-     * Valida que las dependencias no sean null (fail-fast).
-     *
-     * @param scanner Scanner compartido para entrada de usuario
-     * @param productoService Servicio de productos
-     * @throws IllegalArgumentException si alguna dependencia es null
-     */
+// Constructor: recibe scanner y servicio de productos.
+
+    
     public MenuHandler(Scanner scanner, ProductoServiceImpl productoService) {
         if (scanner == null) {
             throw new IllegalArgumentException("Scanner no puede ser null");
@@ -43,7 +31,7 @@ public class MenuHandler {
         this.productoService = productoService;
     }
 
-    //Crear un nuevo producto, ingresando todos los parametros string y double
+// Crea un nuevo producto.
      
     public void crearProducto() {
         try {
@@ -74,7 +62,7 @@ public class MenuHandler {
     }
 
     
-    // Listar productos / buscar por nombre o marca
+// Lista productos o busca por nombre/marca.
     
     public void listarProductos() {
         try {
@@ -114,7 +102,7 @@ public class MenuHandler {
     }
 
     
-      //Actualizar producto existente.
+// Actualiza un producto existente.
      
      
      
@@ -167,7 +155,7 @@ public class MenuHandler {
         }
     }
 
-    // Eliminar producto (soft delete).
+// Elimina un producto.
  
      
     public void eliminarProducto() {
@@ -182,7 +170,7 @@ public class MenuHandler {
     }
 
 
-     // Opción 5: Crear producto 
+// Crea un código de barras independiente.
      
     public void crearCodBarrasIndependiente() {
         try {
@@ -195,7 +183,7 @@ public class MenuHandler {
     }
 
     
-     // Listar todos los productos activos.
+// Lista todos los códigos de barras.
      
     public void listarCodBarras() {
         try {
@@ -214,7 +202,7 @@ public class MenuHandler {
     }
 
     
-    //: Actualizar producto por ID.
+// Actualiza un código de barras por ID.
     
     public void actualizarCodBarrasPorId() {
         try {
@@ -246,7 +234,7 @@ public class MenuHandler {
         }
     }
 
- //Eliminar domicilio por ID ( soft delete directo).
+// Elimina el código de barras asociado a un producto.
      
     public void eliminarCodBarrasPorId() {
         try {
@@ -322,9 +310,8 @@ public class MenuHandler {
         }
     }
 
-    //Método auxiliar privado: Crea un objeto codigo de barras.
-     
-//    @return CodigoBarras nuevo (no persistido, ID=0)
+ // Crea un objeto CodigoBarras desde consola.
+
     
     private CodigoBarras crearCodBarras() {
         System.out.print("Valor: ");
@@ -339,11 +326,9 @@ public class MenuHandler {
         return new CodigoBarras(0, valor, tipo, fechaAsignacion, observaciones);
     }
 
-    /* Método auxiliar privado: Maneja actualización de codigo dentro de actualizar producto.
-     *
-     * @param p Producto a la que se le actualizará/agregará codigoBarras
-     * @throws Exception Si hay error al insertar/actualizar codigoBarras
-     */
+// Maneja actualización/agregado de código de barras dentro de actualizarProducto().
+  
+    
     private void actualizarCodBarrasDeProducto(Producto p) throws Exception {
         if (p.getCodBarras() != null) {
             System.out.print("¿Desea actualizar el codigo de barras? (s/n): ");

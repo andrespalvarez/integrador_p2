@@ -1,46 +1,14 @@
 package Main;
 
-/**
- * Clase utilitaria para mostrar el menú de la aplicación.
- * Solo contiene métodos estáticos de visualización (no tiene estado).
- *
- * Responsabilidades:
- * - Mostrar el menú principal con todas las opciones disponibles
- * - Formatear la salida de forma consistente
- *
- * Patrón: Utility class (solo métodos estáticos, no instanciable)
- *
- * IMPORTANTE: Esta clase NO lee entrada del usuario.
- * Solo muestra el menú. AppMenu es responsable de leer la opción.
- */
+// Clase utilitaria para mostrar el menú principal.
+
+ 
 public class MenuDisplay {
-    /**
-     * Muestra el menú principal con todas las opciones CRUD.
-     *
-     * Opciones de Personas (1-4)://****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-     * 1. Crear persona: Permite crear persona con domicilio opcional//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-     * 2. Listar personas: Lista todas o busca por nombre/apellido//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-     * 3. Actualizar persona: Actualiza datos de persona y opcionalmente su domicilio//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-     * 4. Eliminar persona: Soft delete de persona (NO elimina domicilio asociado)//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-     *
-     * Opciones de Domicilios (5-10)://****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-     * 5. Crear domicilio: Crea domicilio independiente (sin asociar a persona)//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-     * 6. Listar domicilios: Lista todos los domicilios activos//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-     * 7. Actualizar domicilio por ID: Actualiza domicilio directamente (afecta a TODAS las personas)//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-     * 8. Eliminar domicilio por ID: PELIGROSO - puede dejar FKs huérfanas (RN-029)//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-     * 9. Actualizar domicilio por ID de persona: Busca persona primero, luego actualiza su domicilio//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-     * 10. Eliminar domicilio por ID de persona: SEGURO - actualiza FK primero, luego elimina (RN-029)//****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-     *
-     * Opción de salida:
-     * 0. Salir: Termina la aplicación
-     *
-     * Formato:
-     * - Separador visual "========= MENU ========="
-     * - Lista numerada clara
-     * - Prompt "Ingrese una opcion: " sin salto de línea (espera input)
-     *
-     * Nota: Los números de opción corresponden al switch en AppMenu.processOption().
-     */
+    
+// Muestra el menú principal con las opciones de productos y códigos de barras.
+    
+    
+    
     public static void mostrarMenuPrincipal() {
         System.out.println("\n========= MENU =========");
         System.out.println("1. Crear producto");

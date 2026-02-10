@@ -6,30 +6,41 @@ import java.sql.SQLException;
 
 public class DatabaseConnection {
 
-    // Datos de conexión - Se configuran directamente en el código
+// Datos básicos de conexión a la base de datos
+
+
     private static final String URL = "jdbc:mariadb://localhost:3306/dbProdCodBarras"; //direccion mariadb
     private static final String USER = "root";
     private static final String PASSWORD = "";
 
     static {
         try {
-            // 🔹 Carga del driver JDBC de MySQL una sola vez
-//            Class.forName("com.mysql.cj.jdbc.Driver"); //driver mysql server
+           
+// Carga única del driver JDBC al iniciar la clase
+            
+            
             Class.forName("org.mariadb.jdbc.Driver"); //driver mariadb
             
         } catch (ClassNotFoundException e) {
-            // 🔹 Se lanza una excepción en caso de que el driver no esté disponible
+
+// Lanza excepción si el driver JDBC no está disponible
+
+
             throw new RuntimeException("Error: No se encontró el driver JDBC.", e);
         }
     }
 
-    /**
-     * 🔹 Método para obtener una conexión a la base de datos.
-     * @return Connection si la conexión es exitosa.
-     * @throws SQLException Si hay un problema al conectarse.
-     */
+
+//Devuelve una conexión activa a la base de datos.
+//@return Connection establecida correctamente.
+//@throws SQLException si ocurre un error al conectar.
+ 
+
     public static Connection getConnection() throws SQLException {
-        // Validación adicional para asegurarse de que las credenciales no estén vacías
+
+// Verifica que la configuración de conexión sea válida antes de abrir la conexión
+
+
         if (URL == null || URL.isEmpty() || USER == null || USER.isEmpty() || PASSWORD == null ) {
             throw new SQLException("Configuración de la base de datos incompleta o inválida.");
         }
