@@ -33,8 +33,8 @@ public class AppMenu {
     
     public AppMenu() {
         this.scanner = new Scanner(System.in);
-        ProductoServiceImpl productoService = createProductoService();    //****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
-        this.menuHandler = new MenuHandler(scanner, productoService);    //****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****MODIFICAR****
+        ProductoServiceImpl productoService = createProductoService();    
+        this.menuHandler = new MenuHandler(scanner, productoService);    
         this.running = true;
     }
 

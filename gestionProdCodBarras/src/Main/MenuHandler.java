@@ -247,7 +247,7 @@ public class MenuHandler {
         }
     }
 
-  // Actualizar domicilio de una persona específica.
+  // Actualizar el codigo de barras de un producto específico.
     public void actualizarCodBarrasPorProducto() {
         try {
             System.out.print("ID del producto cuyo codigo de barras desea actualizar: ");

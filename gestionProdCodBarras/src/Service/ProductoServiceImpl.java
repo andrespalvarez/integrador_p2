@@ -62,12 +62,12 @@ public class ProductoServiceImpl implements GenericService<Producto> {
     
     
     @Override
-    public void actualizar(Producto persona) throws Exception {
-        validateProducto(persona);
-        if (persona.getId() <= 0) {
-            throw new IllegalArgumentException("El ID de la persona debe ser mayor a 0 para actualizar");
+    public void actualizar(Producto producto) throws Exception {
+        validateProducto(producto);
+        if (producto.getId() <= 0) {
+            throw new IllegalArgumentException("El ID del producto debe ser mayor a 0 para actualizar");
         }
-        productoDAO.actualizar(persona);
+        productoDAO.actualizar(producto);
     }
 
 // Elimina un producto por ID luego de validar el parámetro.
@@ -118,41 +118,41 @@ public class ProductoServiceImpl implements GenericService<Producto> {
     }
 
     
-    public void eliminarCodigoBarrasDeProducto(int personaId, int domicilioId) throws Exception {
-        if (personaId <= 0 || domicilioId <= 0) {
+    public void eliminarCodigoBarrasDeProducto(int productoId, int codigoBarrasId) throws Exception {
+        if (productoId <= 0 || codigoBarrasId <= 0) {
             throw new IllegalArgumentException("Los IDs deben ser mayores a 0");
         }
 
-        Producto persona = productoDAO.getById(personaId);
-        if (persona == null) {
-            throw new IllegalArgumentException("Persona no encontrada con ID: " + personaId);
+        Producto producto = productoDAO.getById(productoId);
+        if (producto == null) {
+            throw new IllegalArgumentException("Producto no encontrada con ID: " + productoId);
         }
 
-        if (persona.getCodBarras() == null || persona.getCodBarras().getId() != domicilioId) {
-            throw new IllegalArgumentException("El domicilio no pertenece a esta persona");
+        if (producto.getCodBarras() == null || producto.getCodBarras().getId() != codigoBarrasId) {
+            throw new IllegalArgumentException("El codigo de barras no pertenece a este producto");
         }
 
-        // Secuencia transaccional: actualizar FK → eliminar domicilio
-        persona.setCodBarras(null);
-        productoDAO.actualizar(persona);
-        codigoBarrasServiceImpl.eliminar(domicilioId);
+        // Secuencia transaccional: actualizar FK → eliminar codigo de barras
+        producto.setCodBarras(null);
+        productoDAO.actualizar(producto);
+        codigoBarrasServiceImpl.eliminar(codigoBarrasId);
     }
 
 // Valida que un producto tenga nombre, marca y categoría válidos.
     
     
-    private void validateProducto(Producto persona) {
-        if (persona == null) {
-            throw new IllegalArgumentException("La persona no puede ser null");
+    private void validateProducto(Producto producto) {
+        if (producto == null) {
+            throw new IllegalArgumentException("El producto no puede ser null");
         }
-        if (persona.getNombre() == null || persona.getNombre().trim().isEmpty()) {
+        if (producto.getNombre() == null || producto.getNombre().trim().isEmpty()) {
             throw new IllegalArgumentException("El nombre no puede estar vacío");
         }
-        if (persona.getMarca() == null || persona.getMarca().trim().isEmpty()) {
-            throw new IllegalArgumentException("El apellido no puede estar vacío");
+        if (producto.getMarca() == null || producto.getMarca().trim().isEmpty()) {
+            throw new IllegalArgumentException("La marca no puede estar vacía");
         }
-        if (persona.getCategoria() == null || persona.getCategoria().trim().isEmpty()) {
-            throw new IllegalArgumentException("El DNI no puede estar vacío");
+        if (producto.getCategoria() == null || producto.getCategoria().trim().isEmpty()) {
+            throw new IllegalArgumentException("La categoria no puede estar vacía");
         }
     }
 }
