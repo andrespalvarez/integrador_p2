@@ -153,7 +153,7 @@ public class ProductoServiceImpl implements GenericService<Producto> {
         }
         if (producto.getCategoria() == null || producto.getCategoria().trim().isEmpty()) {
             throw new IllegalArgumentException("La categoria no puede estar vacía");
-        }
+        }        
     }
 }
 
