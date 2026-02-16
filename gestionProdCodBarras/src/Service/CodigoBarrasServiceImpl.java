@@ -68,16 +68,6 @@ public class CodigoBarrasServiceImpl implements GenericService<CodigoBarras> {
         return codigoBarrasDAO.getAll();
     }
 
-// BÚSQUEDA ESPECIALIZADA
-
-    public CodigoBarras buscarPorValor(String valor) throws Exception {
-        if (valor == null || valor.trim().isEmpty()) {
-            throw new IllegalArgumentException("El valor no puede estar vacío");
-        }
-        // Debe existir un método en tu DAO
-        // return ((CodigoBarrasDAO) codigoBarrasDAO).buscarPorValor(valor);
-        return null;
-    }
 
 // VALIDACIONES
     

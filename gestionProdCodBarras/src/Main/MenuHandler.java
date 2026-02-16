@@ -117,31 +117,31 @@ public class MenuHandler {
                 return;
             }
 
-            System.out.print("Nuevo nombre (actual: " + p.getNombre() + ", Enter para mantener): ");
+            System.out.print("Nuevo nombre (actual: " + p.getNombre() + "): ");
             String nombre = scanner.nextLine().trim();
             if (!nombre.isEmpty()) {
                 p.setNombre(nombre);
             }
 
-            System.out.print("Nueva marca (actual: " + p.getMarca() + ", Enter para mantener): ");
+            System.out.print("Nueva marca (actual: " + p.getMarca() + "): ");
             String marca = scanner.nextLine().trim();
             if (!marca.isEmpty()) {
                 p.setMarca(marca);
             }
 
-            System.out.print("Nueva categoria (actual: " + p.getCategoria() + ", Enter para mantener): ");
+            System.out.print("Nueva categoria (actual: " + p.getCategoria() + "): ");
             String categoria = scanner.nextLine().trim();
             if (!categoria.isEmpty()) {
                 p.setCategoria(categoria);
             }
             
-            System.out.print("Nuevo precio (actual: " + p.getPrecio() + ", Enter para mantener): ");
+            System.out.print("Nuevo precio (actual: " + p.getPrecio() + "): ");
             double precio = Double.parseDouble(scanner.nextLine().trim());
             if (!Double.isNaN(precio)) {
                 p.setPrecio(precio);
             }
             
-            System.out.print("Nuevo peso (actual: " + p.getPeso() + ", Enter para mantener): ");
+            System.out.print("Nuevo peso (actual: " + p.getPeso() + "): ");
             double peso = Double.parseDouble(scanner.nextLine().trim());
             if (!Double.isNaN(peso)) {
                 p.setPeso(peso);
@@ -276,7 +276,7 @@ public class MenuHandler {
             if (!valor.isEmpty()) {
                 c.setValor(valor);
             }
-
+            
             productoService.getCodigoBarrasService().actualizar(c);
             System.out.println("Codigo de barras actualizado exitosamente.");
         } catch (Exception e) {

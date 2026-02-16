@@ -1,0 +1,180 @@
+<diagram program="umletino" version="15.1"><zoom_level>7</zoom_level><element><id>UMLClass</id><coordinates><x>707</x><y>1022</y><w>546</w><h>336</h></coordinates><panel_attributes>ProductoDAO
+-
+- INSERT_SQL: String = "INSERT INTO producto (nombre, marca, categoria, precio, peso, codigoBarras) VALUES (?, ?, ?, ?, ?, ? )"
+- UPDATE_SQL: String = "UPDATE producto SET nombre = ?, marca = ?, categoria = ?, precio = ?, peso = ?, codigoBarras = ? WHERE id = ?"
+- DELETE_SQL: String = "UPDATE producto SET eliminado = TRUE WHERE id = ?"
+- SELECT_BY_ID_SQL: String = "SELECT p.id, p.nombre, p.marca, p.categoria, p.precio, p.peso, p.codigoBarras , " +
+            "cb.id AS id, cb.tipo, cb.valor, cb.fechaAsignacion, cb.observaciones  " +
+            "FROM producto p LEFT JOIN codigobarras cb ON p.codigobarras = cb.id " +
+            "WHERE p.id = ? AND p.eliminado = FALSE"
+- SELECT_ALL_SQL: String = "SELECT p.id, p.nombre, p.marca, p.categoria, p.precio, p.peso, p.codigoBarras , " +
+            "cb.id AS id, cb.tipo, cb.valor , cb.fechaAsignacion, cb.observaciones  " +
+            "FROM producto p LEFT JOIN codigobarras cb ON p.codigobarras = cb.id " +
+            "WHERE p.eliminado = FALSE"
+- SEARCH_BY_NAME_SQL: String = "SELECT p.id, p.nombre, p.marca, p.categoria, p.precio, p.peso, p.codigoBarras , " +
+            "cb.id AS id, cb.tipo, cb.valor , cb.fechaAsignacion, cb.observaciones " +
+            "FROM producto p LEFT JOIN codigobarras cb ON p.codigobarras = cb.id " +
+            "WHERE p.eliminado = FALSE AND (p.nombre LIKE ? OR p.marca LIKE ?)"
+- codigoBarrasDAO: CodigoBarrasDAO
+-
++ insertar(Producto): void
++ insertTx(Producto, Connection): void
++ actualizar(Producto): void
++ eliminar(int): void
++ getById(int): Producto
++ getAll(): List&lt;Producto&gt;
++ buscarPorNombreMarca(String): List&lt;Producto&gt; 
+- setCodigoBarrasId(PreparedStatement , int , CodigoBarras): void
+- setGeneratedId(PreparedStatement , Producto ): void
+- mapResultSetToProducto(ResultSet): Producto
+
+
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>63</x><y>917</y><w>147</w><h>133</h></coordinates><panel_attributes>CodigoBarras
+-
+- valor: String 
+- tipo: String 
+- fechaAsignacion: LocalDate 
+- observaciones: String 
+-
++ toString(): String</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>364</x><y>763</y><w>147</w><h>133</h></coordinates><panel_attributes>/Base/
+-
+- id: int
+- eliminado: boolean
+-
++ isEliminado(): boolean
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>35</x><y>35</y><w>147</w><h>133</h></coordinates><panel_attributes>Main
+-
+-
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>217</x><y>245</y><w>203</w><h>210</h></coordinates><panel_attributes>MenuHandler
+-
+- productoService: ProductoServiceImpl
+-
++ crearProducto(): void
++ listarProductos(): void
++ actualizarProducto(): void
++ eliminarProducto(): void
++ crearCodBarrasIndependiente(): void
++ listarCodBarras(): void
++ actualizarCodBarrasPorId(): void
++ eliminarCodBarrasPorId(): void
++ actualizarCodBarrasPorProducto(): void
++ eliminarCodBarrasPorProducto(): void
+- crearCodBarras(): CodigoBarras
+- actualizarCodBarrasDeProducto(Producto): void
+
+
+
+ 
+
+
+
+
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>217</x><y>70</y><w>203</w><h>133</h></coordinates><panel_attributes>AppMenu
+-
+-
+- menuHandler: MenuHandler
+- running: boolean
++ run(): void
+- process(int): void
+- createProductoService(): ProductoServiceImpl</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>35</x><y>343</y><w>147</w><h>133</h></coordinates><panel_attributes>TestConexion
+-
+-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>35</x><y>189</y><w>147</w><h>133</h></coordinates><panel_attributes>MenuDisplay
+-
+-
++ mostrarMenuPrincipal(): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>28</x><y>1323</y><w>245</w><h>140</h></coordinates><panel_attributes>ProductoServiceImpl
+-
+- productoDAO: ProductoDAO 
+- codigoBarrasServiceImpl: CodigoBarrasServiceImpl 
+-
++ insertar(Producto): void
++ actualizar(Producto): void
++ eliminar(int): void
++ getById(int): Producto 
++ getAll(): List&lt;Producto&gt;
++ buscarPorNombreMarca(String ): List&lt;Producto&gt;
++ eliminarCodigoBarrasDeProducto(int , int ): void
+- validateProducto(Producto ): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>28</x><y>1603</y><w>245</w><h>133</h></coordinates><panel_attributes>CodigoBarrasServiceImpl
+-
+- codigoBarrasDAO: GenericDAO&lt;CodigoBarras&gt; 
+-
++ void insertar(CodigoBarras ): void
++ void actualizar(CodigoBarras ): void
++ void eliminar(int ): void
++ getById(int ): CodigoBarras 
++ getAll(): List&lt;CodigoBarras&gt;
++ buscarPorValor(String ): CodigoBarras 
+- validateCodigoBarras(CodigoBarras ): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>63</x><y>637</y><w>147</w><h>133</h></coordinates><panel_attributes>Producto
+-
+- nombre: String 
+- marca: String 
+- categoria: String 
+- precio: double 
+- peso: double 
+- codigoBarras: CodigoBarras 
+-
++ toString(): String</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>707</x><y>1512</y><w>546</w><h>210</h></coordinates><panel_attributes>CodigoBarrasDAO
+-
+- INSERT_SQL: String = "INSERT INTO codigobarras (tipo, valor, fechaAsignacion, observaciones) VALUES (?, ?, ?, ?)"
+- UPDATE_SQL: String = "UPDATE codigobarras SET tipo = ?, valor = ?, fechaAsignacion = ?, observaciones = ?  WHERE id = ?" 
+- DELETE_SQL: String = "UPDATE codigobarras SET eliminado = TRUE WHERE id = ?"
+- SELECT_BY_ID_SQL: String = "SELECT * FROM codigobarras WHERE id = ? AND eliminado = FALSE"
+- SELECT_ALL_SQL: String = "SELECT * FROM codigobarras WHERE eliminado = FALSE"
+-
++ insertar(CodigoBarras): void
++ insertTx(CodigoBarras, Connection): void
++ actualizar(CodigoBarras): void
++ eliminar(int): void
++ getById(int): CodigoBarras
++ getAll(): List&lt;CodigoBarras&gt;
+- setCodigoBarrasParameters(PreparedStatement , CodigoBarras): void
+- setGeneratedId(PreparedStatement , CodigoBarras): void
+- mapResultSetToCodigoBarras(ResultSet): CodigoBarras
+
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1316</x><y>1323</y><w>147</w><h>133</h></coordinates><panel_attributes>&lt;&lt;interface&gt;&gt;
+GenericDAO
+-
+-
+~ insertar(T): void 
+~ insertTx(T): void 
+~ actualizar(T): void 
+~ eliminar(int): void 
+~ getById(int) : T
+~ getAll(): List&lt;T&gt;</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>714</x><y>112</y><w>266</w><h>133</h></coordinates><panel_attributes>DatabaseConnection
+-
+- URL: String = "jdbc:mariadb://localhost:3306/dbProdCodBarras"
+- USER = "root";
+- PASSWORD: String = ""
+-
++ getConnection(): Connection </panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1057</x><y>112</y><w>147</w><h>133</h></coordinates><panel_attributes>TransactionManager
+-
+- conn: Connection 
+- transactionActive: boolean 
+-
++ startTransaction(): void 
++ commit(): void 
++ rollback(): void 
++ close(): void 
++ isTransactionActive(): boolean </panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1246</x><y>1302</y><w>84</w><h>77</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>100;90;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1246</x><y>1421</y><w>84</w><h>182</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>100;10;10;240</additional_attributes></element><element><id>UMLClass</id><coordinates><x>392</x><y>1435</y><w>147</w><h>133</h></coordinates><panel_attributes>&lt;&lt;interface&gt;&gt;
+GenericService
+-
+-
+~ insertar(T): void 
+~ actualizar(T): void 
+~ eliminar(int): void 
+~ getById(int) : T
+~ getAll(): List&lt;T&gt;</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>266</x><y>1400</y><w>140</w><h>112</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>180;140;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>266</x><y>1505</y><w>140</w><h>168</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>180;10;10;220</additional_attributes></element><element><id>UMLPackage</id><coordinates><x>686</x><y>980</y><w>812</w><h>791</h></coordinates><panel_attributes>DAO
+--
+bg=blue</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>0</x><y>1274</y><w>574</w><h>497</h></coordinates><panel_attributes>Service
+--
+bg=green</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>0</x><y>574</y><w>574</w><h>525</h></coordinates><panel_attributes>Entities
+--
+bg=red</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>203</x><y>700</y><w>175</w><h>126</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>230;160;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>203</x><y>840</y><w>175</w><h>119</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>230;10;10;150</additional_attributes></element><element><id>UMLPackage</id><coordinates><x>686</x><y>0</y><w>574</w><h>364</h></coordinates><panel_attributes>Config
+--
+bg=yellow</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>0</x><y>0</y><w>455</w><h>504</h></coordinates><panel_attributes>Main
+--
+bg=orange</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>126</x><y>763</y><w>35</w><h>168</h></coordinates><panel_attributes>lt=&lt;&lt;-
+1-1</panel_attributes><additional_attributes>10;220;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>140</x><y>1456</y><w>21</w><h>161</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;210;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>266</x><y>1078</y><w>455</w><h>322</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>630;10;10;440</additional_attributes></element><element><id>Relation</id><coordinates><x>266</x><y>1631</y><w>455</w><h>77</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>630;10;10;90</additional_attributes></element><element><id>Relation</id><coordinates><x>959</x><y>1351</y><w>21</w><h>175</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;230;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>266</x><y>336</y><w>364</w><h>1029</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;1450;500;1110;500;210;220;10</additional_attributes></element><element><id>Relation</id><coordinates><x>252</x><y>1092</y><w>21</w><h>210</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;10;10;280</additional_attributes></element><element><id>Relation</id><coordinates><x>252</x><y>497</y><w>21</w><h>105</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;10;10;130</additional_attributes></element></diagram>
